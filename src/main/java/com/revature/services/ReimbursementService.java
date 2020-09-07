@@ -26,10 +26,13 @@ public class ReimbursementService {
     }
 
     public Reimbursement getReimbursementById (int id){
+        if (id < 1){
+            throw new InvalidRequestException("Invalid id number");
+        }
         Reimbursement reimbursement = reimbursementRepo.getReimbursementById(id);
         return reimbursement;
     }
-    public Set<Reimbursement> getPendingReimbursementById (User currentUser){
+    public Set<Reimbursement> getPendingReimbursementByUserId (User currentUser){
         int userId = currentUser.getId();
         Set<Reimbursement> pending = reimbursementRepo.getPendingReimbursementById(userId);
         if (pending.isEmpty()){
@@ -38,7 +41,7 @@ public class ReimbursementService {
         return pending;
     }
 
-    public Set<Reimbursement> getResolvedReimbursementById (User currentUser){
+    public Set<Reimbursement> getResolvedReimbursementByUserId (User currentUser){
         int userId = currentUser.getId();
         Set<Reimbursement> resolved = reimbursementRepo.getResolvedReimbursementById(userId);
         if (resolved.isEmpty()){

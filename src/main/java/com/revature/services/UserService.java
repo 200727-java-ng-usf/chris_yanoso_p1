@@ -2,6 +2,7 @@ package com.revature.services;
 
 import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.InvalidRequestException;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.User;
 import com.revature.repos.UserRepo;
@@ -68,7 +69,7 @@ public class UserService {
         Optional<User> user = userRepo.findUserById(id);
 
         if (!user.isPresent()){
-            throw new AuthenticationException("No user found with the provided id");
+            throw new ResourceNotFoundException("No user found with the provided id");
         }
         return user;
 
@@ -76,6 +77,9 @@ public class UserService {
     //deletes user by finding user by id
     public boolean deleteUserById(int id){
         Optional<User> user = userRepo.findUserById(id);
+        if (!user.isPresent()){
+            throw new ResourceNotFoundException("No user found with the provided id");
+        }
         userRepo.delete(user);
         //checks to see if user exists still
         if (userRepo.findUserByUsername(user.get().getUsername()).isPresent()){
