@@ -2,13 +2,14 @@ package com.revature.models;
 
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Reimbursement {
     private int id;
     private double amount;
-    private Time submitted;
-    private Time resolved;
+    private Timestamp submitted;
+    private Timestamp resolved;
     private String description;
     private String receipt;
     private int authorId;
@@ -20,7 +21,7 @@ public class Reimbursement {
         super();
     }
 
-    public Reimbursement(double amount, Time submitted, String description, String receipt, int authorId, ReimbursementStatus reimbursementStatus, ReimbursementType reimbursementType) {
+    public Reimbursement(double amount, Timestamp submitted, String description, String receipt, int authorId, ReimbursementStatus reimbursementStatus, ReimbursementType reimbursementType) {
         this.amount = amount;
         this.submitted = submitted;
         this.description = description;
@@ -46,19 +47,19 @@ public class Reimbursement {
         this.amount = amount;
     }
 
-    public Time getSubmitted() {
+    public Timestamp getSubmitted() {
         return submitted;
     }
 
-    public void setSubmitted(Time submitted) {
+    public void setSubmitted(Timestamp submitted) {
         this.submitted = submitted;
     }
 
-    public Time getResolved() {
+    public Timestamp getResolved() {
         return resolved;
     }
 
-    public void setResolved(Time resolved) {
+    public void setResolved(Timestamp resolved) {
         this.resolved = resolved;
     }
 
@@ -133,16 +134,16 @@ public class Reimbursement {
     @Override
     public String toString() {
         return "Reimbursement{" +
-                "id=" + id +
-                ", amount=" + amount +
-                ", submitted=" + submitted +
-                ", resolved=" + resolved +
-                ", description='" + description + '\'' +
-                ", receipt='" + receipt + '\'' +
-                ", authorId=" + authorId +
-                ", resolverId=" + resolverId +
-                ", reimbursementStatus=" + reimbursementStatus +
-                ", reimbursementType=" + reimbursementType +
+                "id= " + id +
+                ", amount= " + amount +
+                ", submitted= " + submitted +
+                ", resolved= " + resolved +
+                ", description= '" + description + '\'' +
+                ", receipt= '" + receipt + '\'' +
+                ", authorId= " + authorId +
+                ", resolverId= " + resolverId +
+                ", reimbursementStatus= " + reimbursementStatus +
+                ", reimbursementType= " + reimbursementType +
                 '}';
     }
 }
