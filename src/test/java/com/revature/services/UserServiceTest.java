@@ -55,8 +55,8 @@ public class UserServiceTest {
         String username = "TestName";
         String password = "TestPassword";
         Mockito.when(userRepo.findUserByCredentials("TestName","TestPassword")).thenReturn(Optional.of(testUser));
-        Optional<User> actualUser = userService.authenticate(username,password);
-        Assert.assertEquals(testUser,actualUser.get());
+        User actualUser = userService.authenticate(username,password);
+        Assert.assertEquals(testUser,actualUser);
     }
 
     @Test

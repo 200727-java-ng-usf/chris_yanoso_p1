@@ -17,7 +17,7 @@ public class UserService {
     public UserService(UserRepo userRepo){this.userRepo = userRepo;}
 
     //used to login
-    public Optional<User> authenticate(String username, String password) throws IOException {
+    public User authenticate(String username, String password) throws IOException {
 
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid username/password provided");
@@ -37,7 +37,7 @@ public class UserService {
 
         }
 
-        return authenticatedUser;
+        return authenticatedUser.get();
     }
 
 

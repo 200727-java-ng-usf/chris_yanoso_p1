@@ -13,6 +13,7 @@ import com.revature.repos.UserRepo;
 import com.revature.services.UserService;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,38 +41,42 @@ public class AuthServlet extends HttpServlet {
         PrintWriter respWriter = resp.getWriter();
         resp.setContentType("application/json");
 
-
         try {
 
-            Credentials creds = mapper.readValue(req.getInputStream(), Credentials.class);
 
-            User authUser = userService.authenticate(creds.getUsername(), creds.getPassword()).get();
+            ServletInputStream res = req.getInputStream();
+            Credentials creds = mapper.readValue(res, Credentials.class);
+
+            User authUser = userService.authenticate(creds.getUsername(), creds.getPassword());
             Principal principal = new Principal(authUser);
 
             HttpSession session = req.getSession();
             session.setAttribute("principal", principal.stringify());
 
             resp.setStatus(204);
-        } catch (MismatchedInputException | InvalidRequestException ie){
+
+        } catch (MismatchedInputException | InvalidRequestException e) {
 
             resp.setStatus(400);
-            ErrorResponse err = new ErrorResponse(400 ,"Bad Request");
+            e.printStackTrace();
+            ErrorResponse err = new ErrorResponse(400, "Bad Request");
             String errJSON = mapper.writeValueAsString(err);
             respWriter.write(errJSON);
 
-        } catch (AuthenticationException ae){
+        } catch (AuthenticationException ae) {
 
             resp.setStatus(401);
             ErrorResponse err = new ErrorResponse(401, ae.getMessage());
             String errJSON = mapper.writeValueAsString(err);
             respWriter.write(errJSON);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             e.printStackTrace();
             resp.setStatus(500);
-            ErrorResponse err = new ErrorResponse(500, "Coding error");
+            ErrorResponse err = new ErrorResponse(500, "Server Error");
             respWriter.write(mapper.writeValueAsString(err));
+
         }
 
     }
