@@ -23,7 +23,43 @@ function loadLogin() {
     }
 }
 
+function loadHome() {
 
+    console.log('inside loadHome()');
+
+    if (!localStorage.getItem('authUser')) {
+        console.log('No user logged in, navigating to login screen');
+        loadLogin();
+        return;
+    }
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'home.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureHomeView();
+        }
+    }
+}
+
+function loadAllUsers() {
+    console.log('inside loadAllUsers()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'allUsers.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureAllUsersView();
+        }
+    }
+    
+}
 
 
 //-------------------------------Configure Views------------------------------
@@ -34,6 +70,27 @@ function configureLoginView(){
     document.getElementById('login-message').setAttribute('hidden', true);
     document.getElementById('login-button-container').addEventListener('mouseover', validateLoginForm);
     document.getElementById('login').addEventListener('click', login);
+}
+
+function configureHomeView() {
+
+    console.log('inside configureHomeView()');
+
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+    document.getElementById('loggedInUsername').innerText = authUser.username;
+    document.getElementById('all-users').addEventListener('click', loadAllUsers);
+    document.getElementById('single-user').addEventListener('click', loadUser);
+}
+
+function configureAllUsersView(){
+
+    console.log('inside configureAllUsersView()');
+
+
+    // document.getElementById('home').addEventListener('click', loadhome);
+    // document.getElementById('single-user').addEventListener('click', loadUser);
+    getAllUsers();
+
 }
 
 //--------------------------------Operations-----------------------------------
@@ -63,7 +120,7 @@ function login(){
 
             document.getElementById('login-message').setAttribute('hidden', true);
             localStorage.setItem('authUser', xhr.responseText);
-            //loadHome();
+            loadHome();
 
         } else if (xhr.readyState == 4 && xhr.status == 401) {
 
@@ -74,7 +131,30 @@ function login(){
     }
 }
 
-//----------------------Form Validation---------------------------------
+function getAllUsers() {
+
+    console.log('inside getAllUsers');
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'users');
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            let usersContainer = document.getElementById('users-container');
+            document.getElementById('users-message').setAttribute('hidden', true);
+            usersContainer.innerHTML = xhr.responseText;
+
+        } else if (xhr.readyState == 4 && xhr.status == 401) {
+
+            document.getElementById('users-message').removeAttribute('hidden');
+        }
+    }
+    
+}
+
+//----------------------Form Validation--------------------------------- 
 
 function validateLoginForm() {
 
