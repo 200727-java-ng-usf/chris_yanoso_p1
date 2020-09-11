@@ -30,3 +30,6 @@ out/
 # IntelliJ-specific files/folders
 *.iml
 .idea/
+
+# Properties files
+*.properties

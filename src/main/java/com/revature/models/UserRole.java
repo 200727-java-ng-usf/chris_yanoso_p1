@@ -1,7 +1,7 @@
 package com.revature.models;
 
 public enum UserRole {
-    NA("Not Applicable"), EMPLOYEE("Employee"), ADMIN("Admin"), MANAGER("Manager");
+    NA("Not Applicable"), EMPLOYEE("Employee"), ADMIN("Admin"), MANAGER("Manager"), TERMINATED("Terminated");
     private String roleName;
     UserRole(String name) {
         this.roleName = name;

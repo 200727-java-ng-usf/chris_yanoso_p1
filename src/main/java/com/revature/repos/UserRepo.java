@@ -100,6 +100,24 @@ public class UserRepo {
             return _user;
         }
 
+    public Set<User> getAllUsers(){
+        Set<User> users = new HashSet<>();
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()){
+
+            String sql = baseQuery;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            users = mapResultSet(rs);
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+        return  users;
+    }
+
     private Set<User> mapResultSet(ResultSet rs) throws SQLException {
         Set<User> users = new HashSet<>();
 

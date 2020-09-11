@@ -17,7 +17,9 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class UserServiceTest {
     private UserService userService;
@@ -143,5 +145,42 @@ public class UserServiceTest {
         boolean actualResult = userService.deleteUserById(5);
         boolean expectedResult = true;
         Assert.assertTrue(actualResult == expectedResult);
+    }
+
+    @Test
+    public void getAllUsersNotFound() {
+        Set<User> users = new HashSet<>();
+        Mockito.when(userRepo.getAllUsers()).thenReturn(users);
+        execeptionRule.expect(ResourceNotFoundException.class);
+        execeptionRule.expectMessage("No users currently exist");
+        userService.getAllUsers();
+    }
+
+    @Test
+    public void getAllUsersTrue() {
+        Set<User> users = new HashSet<>();
+        users.add(testUser);
+        Mockito.when(userRepo.getAllUsers()).thenReturn(users);
+        Set<User> actualResult = userService.getAllUsers();
+        Assert.assertEquals(users, actualResult);
+    }
+
+    @Test
+    public void getUserByEmailTrue(){
+        Mockito.when(userRepo.findUserByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
+        Optional<User> actualUser = userService.getUserByEmail(testUser.getEmail());
+        Assert.assertEquals(testUser, actualUser.get());
+    }
+
+    @Test
+    public void getUserByUsername(){
+        Mockito.when(userRepo.findUserByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
+        Optional<User> actualUser = userService.getUserByUsername(testUser.getUsername());
+        Assert.assertEquals(testUser, actualUser.get());
+    }
+
+    @Test
+    public void updateTrue() throws IOException {
+        userService.update(testUser);
     }
 }

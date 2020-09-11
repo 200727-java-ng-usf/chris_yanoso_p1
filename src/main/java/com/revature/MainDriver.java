@@ -76,5 +76,9 @@ public class MainDriver {
 //        User testUser = userService.getUserById(5).get();
 //        System.out.println(reimbursementService.getResolvedReimbursementById(testUser));
 
+        //new user methods, get all, get by username, get by email works
+//        System.out.println(userService.getAllUsers());
+//        System.out.println(userService.getUserByUsername("CYanoso"));
+//        System.out.println(userService.getUserByEmail("CY@email.com"));
     }
 }

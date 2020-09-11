@@ -9,6 +9,7 @@ import com.revature.repos.UserRepo;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 public class UserService {
 
@@ -74,7 +75,27 @@ public class UserService {
         return user;
 
     }
+
+    //get all users for targeting
+    public Set<User> getAllUsers() {
+        Set<User> users = userRepo.getAllUsers();
+        if (users.isEmpty()){
+            throw new ResourceNotFoundException("No users currently exist");
+        }
+        return  users;
+    }
+    //get user by email, used to see if email is available
+    public Optional<User> getUserByEmail(String email) {
+        Optional<User> user = userRepo.findUserByEmail(email);
+        return user;
+    }
+    //get user by username, used to see if username is available
+    public Optional<User> getUserByUsername(String username){
+        Optional<User> user = userRepo.findUserByUsername(username);
+        return user;
+    }
     //deletes user by finding user by id
+    // TODO fix delete by setting role to terminated
     public boolean deleteUserById(int id){
         Optional<User> user = userRepo.findUserById(id);
         if (!user.isPresent()){
