@@ -5,6 +5,7 @@ import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.User;
+import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
 
 import java.io.IOException;
@@ -54,6 +55,10 @@ public class UserService {
         }
         if (userRepo.findUserByEmail(newUser.getEmail()).isPresent()){
             throw new ResourcePersistenceException("Provided email is already in use!");
+        }
+
+        if (newUser.getUserRole() == null){
+            newUser.setUserRole(UserRole.EMPLOYEE);
         }
 
         userRepo.save(newUser);
