@@ -144,7 +144,26 @@ function getAllUsers() {
 
             let usersContainer = document.getElementById('users-container');
             document.getElementById('users-message').setAttribute('hidden', true);
-            usersContainer.innerHTML = xhr.responseText;
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("user-table");
+            table.removeChild(document.getElementById("user-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "user-list");
+            table.appendChild(newBody);
+
+            for(let i=0; i < requestArr.length; i++){
+
+                let newRow = document.createElement("tr");
+
+                newRow.innerHTML = "<td>" + requestArr[i].id + "</td>" +
+                                    "<td>" + requestArr[i].username + "</td>" +
+                                    "<td>" + requestArr[i].firstName + "</td>" +
+                                    "<td>" + requestArr[i].lastName + "</td>" +
+                                    "<td>" + requestArr[i].email + "</td>";
+
+                newBody.appendChild(newRow);
+            }
 
         } else if (xhr.readyState == 4 && xhr.status == 401) {
 
@@ -153,6 +172,9 @@ function getAllUsers() {
     }
     
 }
+
+
+
 
 //----------------------Form Validation--------------------------------- 
 
