@@ -87,7 +87,7 @@ function configureAllUsersView(){
     console.log('inside configureAllUsersView()');
 
 
-    // document.getElementById('home').addEventListener('click', loadhome);
+    document.getElementById('home').addEventListener('click', loadHome);
     // document.getElementById('single-user').addEventListener('click', loadUser);
     getAllUsers();
 
