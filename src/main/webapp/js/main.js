@@ -2,6 +2,8 @@ const APP_VIEW = document.getElementById('app-view');
 
 window.onload = function() {
     loadLogin();
+    document.getElementById('toLogin').addEventListener('click', loadLogin);
+    document.getElementById('toHome').addEventListener('click', loadHome);
 }
 
 //------------------------------Load Views---------------------------------
@@ -61,6 +63,36 @@ function loadAllUsers() {
     
 }
 
+function loadUser() {
+    console.log('inside loadUser()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'userById.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureUsersByIdView();
+        }
+    }
+}
+
+function loadRegister() {
+    console.log('inside loadRegister()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'register.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureRegister();
+        }
+    }
+}
+
 
 //-------------------------------Configure Views------------------------------
 
@@ -80,6 +112,7 @@ function configureHomeView() {
     document.getElementById('loggedInUsername').innerText = authUser.username;
     document.getElementById('all-users').addEventListener('click', loadAllUsers);
     document.getElementById('single-user').addEventListener('click', loadUser);
+    document.getElementById('register').addEventListener('click', loadRegister)
 }
 
 function configureAllUsersView(){
@@ -88,9 +121,34 @@ function configureAllUsersView(){
 
 
     document.getElementById('home').addEventListener('click', loadHome);
-    // document.getElementById('single-user').addEventListener('click', loadUser);
+    document.getElementById('single-user').addEventListener('click', loadUser);
     getAllUsers();
 
+}
+
+function configureUsersByIdView(){
+
+    console.log('inside configureUserByIdView');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('user-table').setAttribute('hidden', true);
+    document.getElementById('search-id').addEventListener('click', getUserById);
+    document.getElementById('users-message').setAttribute('hidden', true);
+
+}
+
+function configureRegister(){
+
+    console.log('inside configureRegister()');
+
+    document.getElementById('reg-message').setAttribute('hidden', true);
+
+    //document.getElementById('reg-username').addEventListener('blur', isUsernameAvailable);
+   // document.getElementById('email').addEventListener('blur', isEmailAvailable);
+
+    //document.getElementById('register').setAttribute('disabled', true);
+   // document.getElementById('reg-button-container').addEventListener('mouseover', validateRegisterForm);
+    document.getElementById('register').addEventListener('click', register);
 }
 
 //--------------------------------Operations-----------------------------------
@@ -173,9 +231,83 @@ function getAllUsers() {
     
 }
 
+function getUserById() {
+    console.log("inside getUserById()");
+
+    let nu = document.getElementById('user-id').value;
+
+    let sentString = "users?id=" + nu;
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', sentString);
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            document.getElementById('user-table').removeAttribute('hidden');
+            document.getElementById('users-message').setAttribute('hidden', true);
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("user-table");
+            table.removeChild(document.getElementById("user-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "user-list");
+            table.appendChild(newBody);
+             let newRow = document.createElement("tr");
+
+             newRow.innerHTML = "<td>" + requestArr.id + "</td>" +
+                                "<td>" + requestArr.username + "</td>" +
+                                "<td>" + requestArr.firstName + "</td>" +
+                                "<td>" + requestArr.lastName + "</td>" +
+                                "<td>" + requestArr.email + "</td>";
+
+            newBody.appendChild(newRow);
+        }else if (xhr.readyState == 4 && xhr.status == 401) {
+
+            document.getElementById('users-message').removeAttribute('hidden');
+        }
+    }
+}
+
+function register() {
+
+    console.log('in register()');
+
+    let fn = document.getElementById('fn').value;
+    let ln = document.getElementById('ln').value;
+    let email = document.getElementById('email').value;
+    let un = document.getElementById('reg-username').value;
+    let pw = document.getElementById('reg-password').value;
+
+    let newUser = {
+        firstName: fn,
+        lastName: ln,
+        email: email,
+        username: un,
+        password: pw
+    }
+
+    let newUserJSON = JSON.stringify(newUser);
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('POST', 'users');
+    xhr.send(newUserJSON);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 201) {
+            loadHome();
+        } else if (xhr.readyState == 4 && xhr.status != 201) {
+            document.getElementById('reg-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('reg-message').innerText = err.message;
+        }
+    }
 
 
 
+}
 //----------------------Form Validation--------------------------------- 
 
 function validateLoginForm() {

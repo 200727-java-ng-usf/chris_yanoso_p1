@@ -7,6 +7,7 @@ import com.revature.dtos.ErrorResponse;
 import com.revature.dtos.Principal;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.User;
 import com.revature.repos.UserRepo;
 import com.revature.services.UserService;
@@ -62,6 +63,7 @@ public class UserServlet extends HttpServlet {
                User user = userService.getUserById(id).get();
                String userJSON = mapper.writeValueAsString(user);
                respWriter.write(userJSON);
+               System.out.println(user);
 
             }else {
                Set<User> users = userService.getAllUsers();
@@ -111,6 +113,13 @@ public class UserServlet extends HttpServlet {
 
             resp.setStatus(400);
             ErrorResponse err = new ErrorResponse(400, "Bad request: provided data can not be used");
+            String errJSON = mapper.writeValueAsString(err);
+            respWriter.write(errJSON);
+
+        } catch (ResourcePersistenceException rpe){
+
+            resp.setStatus(400);
+            ErrorResponse err = new ErrorResponse(400, rpe.getMessage());
             String errJSON = mapper.writeValueAsString(err);
             respWriter.write(errJSON);
 

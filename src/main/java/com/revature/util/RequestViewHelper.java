@@ -35,6 +35,12 @@ public class RequestViewHelper {
             case "/allUsers.view":
             case "/reimbursement/allUsers.view":
                 return "partials/all-users.html";
+            case "/userById.view":
+            case "/reimbursement/userById.view":
+                return "partials/user-by-id.html";
+            case "/register.vew":
+            case "/reimbursement/register.view":
+                return "partials/register.html";
             default:
                 return null;
         }
