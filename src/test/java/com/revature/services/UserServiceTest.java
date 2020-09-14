@@ -120,29 +120,18 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUserByIdNoUserFound(){
+    public void deleteUserByIdNoUserFound() throws IOException {
         execeptionRule.expect(ResourceNotFoundException.class);
         execeptionRule.expectMessage("No user found with the provided id");
         Mockito.when(userRepo.findUserById(5)).thenReturn(Optional.empty());
-        userService.deleteUserById(5);
+        userService.terminateUserById(5);
     }
 
-    @Test
-    public void deleteUserByIdDidNotDelete() {
-        Mockito.when(userRepo.findUserById(5)).thenReturn(Optional.of(testUser));
-        Mockito.when(userRepo.findUserByUsername(testUser.getUsername())).thenReturn(Optional.of(testUser));
-        boolean actualResult = userService.deleteUserById(5);
-        boolean expectedResult = false;
-        Assert.assertTrue(actualResult == expectedResult);
-    }
 
     @Test
-    public void deleteUserByIdTrue() {
+    public void deleteUserByIdTrue() throws IOException {
         Mockito.when(userRepo.findUserById(5)).thenReturn(Optional.of(testUser));
-        Mockito.when(userRepo.findUserByUsername(testUser.getUsername())).thenReturn(Optional.empty());
-        boolean actualResult = userService.deleteUserById(5);
-        boolean expectedResult = true;
-        Assert.assertTrue(actualResult == expectedResult);
+        userService.terminateUserById(5);
     }
 
     @Test

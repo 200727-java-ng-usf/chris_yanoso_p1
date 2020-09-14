@@ -99,20 +99,14 @@ public class UserService {
         Optional<User> user = userRepo.findUserByUsername(username);
         return user;
     }
-    //deletes user by finding user by id
-    // TODO fix delete by setting role to terminated
-    public boolean deleteUserById(int id){
+    //terminates user by finding user by id
+    public void terminateUserById(int id) throws IOException {
         Optional<User> user = userRepo.findUserById(id);
         if (!user.isPresent()){
             throw new ResourceNotFoundException("No user found with the provided id");
         }
-        userRepo.delete(user);
-        //checks to see if user exists still
-        if (userRepo.findUserByUsername(user.get().getUsername()).isPresent()){
-            return false;
-        } else {
-            return true;
-        }
+        user.get().setUserRole(UserRole.TERMINATED);
+        userRepo.updateUser(user.get());
     }
 
 

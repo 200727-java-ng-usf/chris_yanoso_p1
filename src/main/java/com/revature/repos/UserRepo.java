@@ -165,23 +165,6 @@ public class UserRepo {
         }
     }
 
-    //deletes user from db
-    // TODO ADD CASCADING DELETE IN DB
-    public void delete(Optional<User> user) {
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            String sql = "DELETE FROM project1.ers_users WHERE ers_user_id = ?";
-
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,user.get().getId());
-
-            pstmt.executeUpdate();
-
-
-        } catch (SQLException se){
-            se.printStackTrace();
-        }
-    }
 
     public void updateUser(User updatedUser) throws IOException {
 
