@@ -32,8 +32,7 @@ public class ReimbursementService {
         Reimbursement reimbursement = reimbursementRepo.getReimbursementById(id);
         return reimbursement;
     }
-    public Set<Reimbursement> getPendingReimbursementByUserId (User currentUser){
-        int userId = currentUser.getId();
+    public Set<Reimbursement> getPendingReimbursementByUserId (int userId){
         Set<Reimbursement> pending = reimbursementRepo.getPendingReimbursementById(userId);
         if (pending.isEmpty()){
             throw new ResourceNotFoundException("Employee number: " + userId + " has no pending reimbursement tickets");
@@ -41,8 +40,7 @@ public class ReimbursementService {
         return pending;
     }
 
-    public Set<Reimbursement> getResolvedReimbursementByUserId (User currentUser){
-        int userId = currentUser.getId();
+    public Set<Reimbursement> getResolvedReimbursementByUserId (int userId){ ;
         Set<Reimbursement> resolved = reimbursementRepo.getResolvedReimbursementById(userId);
         if (resolved.isEmpty()){
             throw new ResourceNotFoundException("Employee number: " + userId + " has no resolved reimbursement tickets");

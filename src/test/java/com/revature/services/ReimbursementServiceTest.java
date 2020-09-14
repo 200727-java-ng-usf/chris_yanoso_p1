@@ -69,7 +69,7 @@ public class ReimbursementServiceTest {
         Mockito.when(reimbursementRepo.getPendingReimbursementById(5)).thenReturn(emptySet);
         execeptionRule.expect(ResourceNotFoundException.class);
         execeptionRule.expectMessage("Employee number: " + userId + " has no pending reimbursement tickets");
-        reimbursementService.getPendingReimbursementByUserId(testUser);
+        reimbursementService.getPendingReimbursementByUserId(testUser.getId());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ReimbursementServiceTest {
         Set<Reimbursement> testSet = new HashSet<>();
         testSet.add(testReimbursement);
         Mockito.when(reimbursementRepo.getPendingReimbursementById(5)).thenReturn(testSet);
-        Set<Reimbursement> actualSet = reimbursementService.getPendingReimbursementByUserId(testUser);
+        Set<Reimbursement> actualSet = reimbursementService.getPendingReimbursementByUserId(testUser.getId());
         Assert.assertEquals(testSet,actualSet);
 
     }
@@ -89,7 +89,7 @@ public class ReimbursementServiceTest {
         Mockito.when(reimbursementRepo.getResolvedReimbursementById(5)).thenReturn(emptySet);
         execeptionRule.expect(ResourceNotFoundException.class);
         execeptionRule.expectMessage("Employee number: " + userId + " has no resolved reimbursement tickets");
-        reimbursementService.getResolvedReimbursementByUserId(testUser);
+        reimbursementService.getResolvedReimbursementByUserId(testUser.getId());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ReimbursementServiceTest {
         Set<Reimbursement> testSet = new HashSet<>();
         testSet.add(testReimbursement);
         Mockito.when(reimbursementRepo.getResolvedReimbursementById(5)).thenReturn(testSet);
-        Set<Reimbursement> actualSet = reimbursementService.getResolvedReimbursementByUserId(testUser);
+        Set<Reimbursement> actualSet = reimbursementService.getResolvedReimbursementByUserId(testUser.getId());
         Assert.assertEquals(testSet,actualSet);
     }
 

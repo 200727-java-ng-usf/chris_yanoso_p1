@@ -1,5 +1,6 @@
 package com.revature.repos;
 
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
@@ -38,6 +39,9 @@ public class ReimbursementRepo {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if (!reimbursement.isPresent()){
+            throw new ResourceNotFoundException("Reimbursement is not found with user id: " + id);
         }
         return reimbursement.get();
     }
