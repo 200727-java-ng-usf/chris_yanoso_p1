@@ -65,12 +65,12 @@ public class UserServlet extends HttpServlet {
                respWriter.write(userJSON);
                System.out.println(user);
 
-            }else {
+           }else {
                Set<User> users = userService.getAllUsers();
                String usersJSON = mapper.writeValueAsString(users);
                respWriter.write(usersJSON);
-               resp.setStatus(200);
            }
+            resp.setStatus(200);
         } catch (ResourceNotFoundException rnfe){
 
             resp.setStatus(404);
