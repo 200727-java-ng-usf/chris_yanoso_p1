@@ -41,6 +41,9 @@ public class RequestViewHelper {
             case "/register.vew":
             case "/reimbursement/register.view":
                 return "partials/register.html";
+            case "/terminate.view":
+            case "/reimbursement/terminate.view":
+                return "partials/terminate.html";
             default:
                 return null;
         }

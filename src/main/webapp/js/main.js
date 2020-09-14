@@ -88,7 +88,21 @@ function loadRegister() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             APP_VIEW.innerHTML = xhr.responseText;
-            configureRegister();
+            configureRegisterView();
+        }
+    }
+}
+function loadTerminateUser() {
+    console.log('inside loadTerminateUser()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'terminate.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureTerminateView();
         }
     }
 }
@@ -112,7 +126,8 @@ function configureHomeView() {
     document.getElementById('loggedInUsername').innerText = authUser.username;
     document.getElementById('all-users').addEventListener('click', loadAllUsers);
     document.getElementById('single-user').addEventListener('click', loadUser);
-    document.getElementById('register').addEventListener('click', loadRegister)
+    document.getElementById('register').addEventListener('click', loadRegister);
+    document.getElementById('terminate-user').addEventListener('click', loadTerminateUser);
 }
 
 function configureAllUsersView(){
@@ -137,9 +152,9 @@ function configureUsersByIdView(){
 
 }
 
-function configureRegister(){
+function configureRegisterView(){
 
-    console.log('inside configureRegister()');
+    console.log('inside configureRegisterView()');
 
     document.getElementById('reg-message').setAttribute('hidden', true);
 
@@ -149,6 +164,15 @@ function configureRegister(){
     //document.getElementById('register').setAttribute('disabled', true);
    // document.getElementById('reg-button-container').addEventListener('mouseover', validateRegisterForm);
     document.getElementById('register').addEventListener('click', register);
+}
+
+function configureTerminateView(){
+    console.log('inside configureTerminateView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('user-table').setAttribute('hidden', true);
+    document.getElementById('search-id').addEventListener('click', terminateUserById);
+    document.getElementById('users-message').setAttribute('hidden', true);
 }
 
 //--------------------------------Operations-----------------------------------
@@ -218,7 +242,8 @@ function getAllUsers() {
                                     "<td>" + requestArr[i].username + "</td>" +
                                     "<td>" + requestArr[i].firstName + "</td>" +
                                     "<td>" + requestArr[i].lastName + "</td>" +
-                                    "<td>" + requestArr[i].email + "</td>";
+                                    "<td>" + requestArr[i].email + "</td>" +
+                                    "<td>" + requestArr[i].userRole + "</td>";
 
                 newBody.appendChild(newRow);
             }
@@ -260,7 +285,8 @@ function getUserById() {
                                 "<td>" + requestArr.username + "</td>" +
                                 "<td>" + requestArr.firstName + "</td>" +
                                 "<td>" + requestArr.lastName + "</td>" +
-                                "<td>" + requestArr.email + "</td>";
+                                "<td>" + requestArr.email + "</td>" +
+                                "<td>" + requestArr.userRole + "</td>";
 
             newBody.appendChild(newRow);
         }else if (xhr.readyState == 4 && xhr.status == 401) {
@@ -272,7 +298,7 @@ function getUserById() {
 
 function register() {
 
-    console.log('in register()');
+    console.log('inside register()');
 
     let fn = document.getElementById('fn').value;
     let ln = document.getElementById('ln').value;
@@ -304,9 +330,45 @@ function register() {
             document.getElementById('reg-message').innerText = err.message;
         }
     }
+}
 
+function terminateUserById() {
+    console.log('inside terminateUserById()');
+    let nu = document.getElementById('user-id').value;
 
+    let sentString = "change/users?id=" + nu;
 
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', sentString);
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            document.getElementById('user-table').removeAttribute('hidden');
+            document.getElementById('users-message').setAttribute('hidden', true);
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("user-table");
+            table.removeChild(document.getElementById("user-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "user-list");
+            table.appendChild(newBody);
+             let newRow = document.createElement("tr");
+
+             newRow.innerHTML = "<td>" + requestArr.id + "</td>" +
+                                "<td>" + requestArr.username + "</td>" +
+                                "<td>" + requestArr.firstName + "</td>" +
+                                "<td>" + requestArr.lastName + "</td>" +
+                                "<td>" + requestArr.email + "</td>" +
+                                "<td>" + requestArr.userRole + "</td>";
+
+            newBody.appendChild(newRow);
+        }else if (xhr.readyState == 4 && xhr.status == 401) {
+
+            document.getElementById('users-message').removeAttribute('hidden');
+        }
+    }
 }
 //----------------------Form Validation--------------------------------- 
 
