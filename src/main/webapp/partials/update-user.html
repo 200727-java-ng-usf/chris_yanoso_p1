@@ -1,0 +1,63 @@
+<div id="update-container">
+    <h2>Revature Reimbursments</h2>
+    <hr/>
+    <h3>Update an existing User</h3>
+    <hr/>
+    <h3>Search for User You wish to Change</h3>
+    <div id = 'users-container'>
+        <div class="form-group">
+            <label for="user-id">Id Number</label>
+            <input type="number" class="form-control" id="user-id" placeholder="Please enter a user id number"/>
+        </div>
+        
+        <div id="user-id-button-container">
+            <button type="submit" class="btn btn-primary" id="search-id">Search</button>
+        </div>
+        <table id="user-table" class="table table-striped" style="margin-left: 15px; margin-right: 15px;">
+        <thead class="thead">
+            <tr>
+                <th>User Id</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="user-list">
+            
+        </tbody>
+        </table>
+    </div>
+    <div id = 'update-user'>
+        <div class="form-group">
+            <label for="fn">First name</label> 
+            <input type="text" class="form-control" id="fn" placeholder="Enter user's first name">
+        </div>
+        <div class="form-group">
+             <label for="ln">Last name</label> 
+            <input type="text" class="form-control" id="ln" placeholder="Enter user's last name">
+         </div>
+        <div class="form-group">
+            <label for="email">Email Address</label> 
+            <input type="email" class="form-control" id="email" placeholder="Enter user's email address">
+        </div>
+        <div class="form-group">
+            <label for="reg-username">Username</label> 
+            <input type="text" class="form-control" id="reg-username" placeholder="Enter user's desired username">
+        </div>
+        <div class="form-group">
+            <label for="reg-password">Password</label> 
+            <input type="password" class="form-control" id="reg-password" placeholder="Enter user's password">
+        </div>
+        <div id="reg-button-container">
+            <button type="submit" class="btn btn-primary" id="update">Update</button>
+        </div>
+    </div>
+    <br/> 
+    <br/>
+    <div id ='home-button'>
+        <button type="submit" class="btn btn-primary" id="home">Home</button>
+    </div>
+    <div class="alert alert-danger" id="users-message"></div>
+</div>

@@ -106,6 +106,20 @@ function loadTerminateUser() {
         }
     }
 }
+function loadUpdateUser() {
+    console.log('inside loadUpdateUser()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'updateUser.view');
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureUpdateUserView();
+        }
+    }
+}
 
 
 //-------------------------------Configure Views------------------------------
@@ -128,6 +142,7 @@ function configureHomeView() {
     document.getElementById('single-user').addEventListener('click', loadUser);
     document.getElementById('register').addEventListener('click', loadRegister);
     document.getElementById('terminate-user').addEventListener('click', loadTerminateUser);
+    document.getElementById('update-user').addEventListener('click', loadUpdateUser)
 }
 
 function configureAllUsersView(){
@@ -173,6 +188,16 @@ function configureTerminateView(){
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', terminateUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
+}
+
+function configureUpdateUserView(){
+    console.log('inside configureUpdateUserView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('user-table').setAttribute('hidden', true);
+    document.getElementById('search-id').addEventListener('click', getUserById);
+    document.getElementById('users-message').setAttribute('hidden', true);
+    document.getElementById('update').addEventListener('click', updateUser);
 }
 
 //--------------------------------Operations-----------------------------------
@@ -370,6 +395,45 @@ function terminateUserById() {
         }
     }
 }
+
+function updateUser(){
+    console.log('inside updateUser()');
+
+    let id = document.getElementById('user-id').value;
+    let fn = document.getElementById('fn').value;
+    let ln = document.getElementById('ln').value;
+    let email = document.getElementById('email').value;
+    let un = document.getElementById('reg-username').value;
+    let pw = document.getElementById('reg-password').value;
+
+
+    let newUser = {
+        firstName: fn,
+        lastName: ln,
+        email: email,
+        username: un,
+        password: pw
+    }
+
+    let newUserJSON = JSON.stringify(newUser);
+    let postString = "change/users/?id=" + id;
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('POST', postString);
+    xhr.send(newUserJSON);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            getUserById();
+        } else if (xhr.readyState == 4 && xhr.status != 201) {
+            document.getElementById('users-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('users-message').innerText = err.message;
+        }
+    }    
+}
+
 //----------------------Form Validation--------------------------------- 
 
 function validateLoginForm() {
