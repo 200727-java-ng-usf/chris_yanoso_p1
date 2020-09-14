@@ -100,7 +100,7 @@ public class ReimbursementServlet extends HttpServlet {
                     Set<Reimbursement> allReimbursementsByUserId = reimbursementService.getPendingReimbursementByUserId(userId);
                     allReimbursementsByUserId.addAll(reimbursementService.getResolvedReimbursementByUserId(userId));
                     String allReimbursementsByUserIdJSON = mapper.writeValueAsString(allReimbursementsByUserId);
-                    respWriter.write(mapper.writeValueAsString(allReimbursementsByUserIdJSON));
+                    respWriter.write(allReimbursementsByUserIdJSON);
                 }
             }
             resp.setStatus(200);
