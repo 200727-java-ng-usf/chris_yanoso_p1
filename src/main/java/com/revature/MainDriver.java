@@ -80,5 +80,8 @@ public class MainDriver {
 //        System.out.println(userService.getAllUsers());
 //        System.out.println(userService.getUserByUsername("CYanoso"));
 //        System.out.println(userService.getUserByEmail("CY@email.com"));
+        Reimbursement reimbursement = reimbursementService.getReimbursementById(1);
+        System.out.println(reimbursement.getSubmitted());
+
     }
 }

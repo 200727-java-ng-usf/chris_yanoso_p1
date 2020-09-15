@@ -138,6 +138,17 @@ function loadUpdateUser() {
 
 function loadManagerHome(){
 
+    console.log('inside loadManagerHome()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'home.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureManagerHomeView();
+        }
+    }
 }
 
 function loadEmployeeHome(){
@@ -146,6 +157,20 @@ function loadEmployeeHome(){
 
 function loadBadHome(){
 
+}
+
+function loadAllReimbursements(){
+    console.log('inside loadAllReimbursements()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('Get', 'allReimbursements.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureAllReimbursementsView();
+        }
+    }
 }
 
 
@@ -225,6 +250,20 @@ function configureUpdateUserView(){
     document.getElementById('search-id').addEventListener('click', getUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
     document.getElementById('update').addEventListener('click', updateUser);
+}
+
+function configureManagerHomeView(){
+    console.log('inside configureMangerHomeView()');
+
+    document.getElementById('all-reimbursements').addEventListener('click', loadAllReimbursements);
+}
+
+function configureAllReimbursementsView(){
+    console.log('inside configureAllReimbursementsView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    //document.getElementById('single-reimbursement').addEventListener('click', loadReimbursemnt);
+    getAllReimbursements();
 }
 
 //--------------------------------Operations-----------------------------------
@@ -459,6 +498,50 @@ function updateUser(){
             document.getElementById('users-message').innerText = err.message;
         }
     }    
+}
+
+function getAllReimbursements() {
+    console.log('inside getAllReimbursements');
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'reimbursements');
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            let reimbursementContainer = document.getElementById('reimbursement-container');
+            document.getElementById('reimbursement-message').setAttribute('hidden', true);
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("reimbursement-table");
+            table.removeChild(document.getElementById("reimbursement-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "reimbursement-list");
+            table.appendChild(newBody);
+
+            for(let i=0; i < requestArr.length; i++){
+
+                let newRow = document.createElement("tr");
+
+                newRow.innerHTML = "<td>" + requestArr[i].id + "</td>" +
+                                    "<td>" + requestArr[i].amount + "</td>" +
+                                    "<td>" + requestArr[i].submitted + "</td>" +
+                                    "<td>" + requestArr[i].resolved + "</td>" +
+                                    "<td>" + requestArr[i].description + "</td>" +
+                                    "<td>" + requestArr[i].authorId + "</td>" +
+                                    "<td>" + requestArr[i].resolverId + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementType + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementStatus + "</td>";
+
+                newBody.appendChild(newRow);
+            }
+
+        } else if (xhr.readyState == 4 && xhr.status == 401) {
+
+            document.getElementById('reimbursement-message').removeAttribute('hidden');
+        }
+    }
 }
 
 //----------------------Form Validation--------------------------------- 
