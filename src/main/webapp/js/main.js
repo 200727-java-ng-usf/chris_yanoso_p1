@@ -3,7 +3,7 @@ const APP_VIEW = document.getElementById('app-view');
 window.onload = function() {
     loadLogin();
     document.getElementById('toLogin').addEventListener('click', loadLogin);
-    document.getElementById('toHome').addEventListener('click', loadHome);
+    //document.getElementById('toHome').addEventListener('click', loadHome);
 }
 
 //------------------------------Load Views---------------------------------
@@ -25,9 +25,9 @@ function loadLogin() {
     }
 }
 
-function loadHome() {
+function loadAdminHome() {
 
-    console.log('inside loadHome()');
+    console.log('inside loadAdminHome()');
 
     if (!localStorage.getItem('authUser')) {
         console.log('No user logged in, navigating to login screen');
@@ -38,11 +38,10 @@ function loadHome() {
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'home.view');
     xhr.send();
-
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             APP_VIEW.innerHTML = xhr.responseText;
-            configureHomeView();
+            configureAdminHomeView();
         }
     }
 }
@@ -121,6 +120,18 @@ function loadUpdateUser() {
     }
 }
 
+function loadManagerHome(){
+
+}
+
+function loadEmployeeHome(){
+
+}
+
+function loadBadHome(){
+
+}
+
 
 //-------------------------------Configure Views------------------------------
 
@@ -132,9 +143,9 @@ function configureLoginView(){
     document.getElementById('login').addEventListener('click', login);
 }
 
-function configureHomeView() {
+function configureAdminHomeView() {
 
-    console.log('inside configureHomeView()');
+    console.log('inside configureAdminHomeView()');
 
     let authUser = JSON.parse(localStorage.getItem('authUser'));
     document.getElementById('loggedInUsername').innerText = authUser.username;
@@ -150,7 +161,7 @@ function configureAllUsersView(){
     console.log('inside configureAllUsersView()');
 
 
-    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('home').addEventListener('click', loadAdminHome);
     document.getElementById('single-user').addEventListener('click', loadUser);
     getAllUsers();
 
@@ -160,7 +171,7 @@ function configureUsersByIdView(){
 
     console.log('inside configureUserByIdView');
 
-    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('home').addEventListener('click', loadAdminHome);
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', getUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
@@ -184,7 +195,7 @@ function configureRegisterView(){
 function configureTerminateView(){
     console.log('inside configureTerminateView()');
 
-    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('home').addEventListener('click', loadAdminHome);
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', terminateUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
@@ -193,7 +204,7 @@ function configureTerminateView(){
 function configureUpdateUserView(){
     console.log('inside configureUpdateUserView()');
 
-    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('home').addEventListener('click', loadAdminHome);
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', getUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
@@ -227,7 +238,18 @@ function login(){
 
             document.getElementById('login-message').setAttribute('hidden', true);
             localStorage.setItem('authUser', xhr.responseText);
-            loadHome();
+            console.log(xhr.responseText);
+            let authUser = JSON.parse(localStorage.getItem('authUser'));
+            console.log(authUser.role);
+            if (authUser.role == 'Admin'){
+                loadAdminHome();
+            } else if (authUser.role == 'Manager'){
+                loadManagerHome();
+            } else if (authUser.role == 'Employee'){
+                loadEmployeeHome();
+            } else {
+                loadBadHome();
+            }
 
         } else if (xhr.readyState == 4 && xhr.status == 401) {
 
