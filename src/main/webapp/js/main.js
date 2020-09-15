@@ -3,7 +3,7 @@ const APP_VIEW = document.getElementById('app-view');
 window.onload = function() {
     loadLogin();
     document.getElementById('toLogin').addEventListener('click', loadLogin);
-    //document.getElementById('toHome').addEventListener('click', loadHome);
+    document.getElementById('toHome').addEventListener('click', loadHome);
 }
 
 //------------------------------Load Views---------------------------------
@@ -25,15 +25,31 @@ function loadLogin() {
     }
 }
 
-function loadAdminHome() {
+function loadHome() {
 
-    console.log('inside loadAdminHome()');
+    console.log('inside loadHome()');
 
     if (!localStorage.getItem('authUser')) {
         console.log('No user logged in, navigating to login screen');
         loadLogin();
         return;
     }
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+            console.log(authUser.role);
+            if (authUser.role == 'Admin'){
+                loadAdminHome();
+            } else if (authUser.role == 'Manager'){
+                loadManagerHome();
+            } else if (authUser.role == 'Employee'){
+                loadEmployeeHome();
+            } else {
+                loadBadHome();
+            }
+}
+
+function loadAdminHome() {
+
+    console.log('inside loadAdminHome()');
 
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'home.view');
@@ -238,18 +254,7 @@ function login(){
 
             document.getElementById('login-message').setAttribute('hidden', true);
             localStorage.setItem('authUser', xhr.responseText);
-            console.log(xhr.responseText);
-            let authUser = JSON.parse(localStorage.getItem('authUser'));
-            console.log(authUser.role);
-            if (authUser.role == 'Admin'){
-                loadAdminHome();
-            } else if (authUser.role == 'Manager'){
-                loadManagerHome();
-            } else if (authUser.role == 'Employee'){
-                loadEmployeeHome();
-            } else {
-                loadBadHome();
-            }
+            loadHome();
 
         } else if (xhr.readyState == 4 && xhr.status == 401) {
 
