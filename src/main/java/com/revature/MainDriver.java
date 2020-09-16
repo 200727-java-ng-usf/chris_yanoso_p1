@@ -38,18 +38,19 @@ public class MainDriver {
 //        System.out.println(userService.deleteUserById(3));
 //        System.out.println(userService.getUserById(3));
 
-        ReimbursementRepo reimbursementRepo = new ReimbursementRepo();
-        ReimbursementService reimbursementService = new ReimbursementService(reimbursementRepo);
-        // added a new ticket successfully
+//        ReimbursementRepo reimbursementRepo = new ReimbursementRepo();
+//        ReimbursementService reimbursementService = new ReimbursementService(reimbursementRepo);
+//        // added a new ticket successfully
 //        double amount = 10.0;
 //        Timestamp submitted = new Timestamp(System.currentTimeMillis());
 //        String description = "Company Lunch";
 //        String receipt = "insert url link here";
 //        int authorId = 5;
-//        ReimbursementStatus reimbursementStatus = ReimbursementStatus.PENDING;
+//         ReimbursementStatus reimbursementStatus = ReimbursementStatus.PENDING;
 //        ReimbursementType reimbursementType = ReimbursementType.FOOD;
 //        Reimbursement reimbursement = new Reimbursement(amount, submitted, description, receipt, authorId, reimbursementStatus, reimbursementType);
 //        reimbursementService.createNewReimbursement(reimbursement);
+//        System.out.println(reimbursement);
 
 //        gets all pending with id 5
 //        System.out.println(reimbursementService.getPendingReimbursementById(userService.getUserById(5).get()));
@@ -80,8 +81,8 @@ public class MainDriver {
 //        System.out.println(userService.getAllUsers());
 //        System.out.println(userService.getUserByUsername("CYanoso"));
 //        System.out.println(userService.getUserByEmail("CY@email.com"));
-        Reimbursement reimbursement = reimbursementService.getReimbursementById(1);
-        System.out.println(reimbursement.getSubmitted());
+//        Reimbursement reimbursement = reimbursementService.getReimbursementById(1);
+//        System.out.println(reimbursement.getSubmitted());
 
     }
 }
