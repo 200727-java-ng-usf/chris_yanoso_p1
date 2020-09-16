@@ -152,7 +152,17 @@ function loadManagerHome(){
 }
 
 function loadEmployeeHome(){
+    console.log('inside loadEmployeeHome');
 
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'home.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureEmployeeHomeView();
+        }
+    } 
 }
 
 function loadBadHome(){
@@ -173,8 +183,8 @@ function loadAllReimbursements(){
     }
 }
 
-function loadReimbursement() {
-    console.log('inside loadReimbursement()');
+function loadReimbursementById() {
+    console.log('inside loadReimbursementById()');
 
     let xhr = new XMLHttpRequest();
     xhr.open('Get', 'reimbursementById.view');
@@ -182,7 +192,7 @@ function loadReimbursement() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             APP_VIEW.innerHTML = xhr.responseText;
-            configureReimbursementView();
+            configureReimbursementByIdView();
         }
     }
 }
@@ -218,6 +228,7 @@ function loadAllResolvedReimbursements(){
         }
     }
 }
+
 
 
 //-------------------------------Configure Views------------------------------
@@ -301,8 +312,10 @@ function configureUpdateUserView(){
 function configureManagerHomeView(){
     console.log('inside configureMangerHomeView()');
 
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+    document.getElementById('loggedInUsername').innerText = authUser.username;
     document.getElementById('all-reimbursements').addEventListener('click', loadAllReimbursements);
-    document.getElementById('reimbursement-by-id').addEventListener('click', loadReimbursement);
+    document.getElementById('reimbursement-by-id').addEventListener('click', loadReimbursementById);
     document.getElementById('all-pending-reimbursements').addEventListener('click', loadAllPendingReimbursements);
     document.getElementById('all-resolved-reimbursements').addEventListener('click', loadAllResolvedReimbursements);
 }
@@ -311,12 +324,12 @@ function configureAllReimbursementsView(){
     console.log('inside configureAllReimbursementsView()');
 
     document.getElementById('home').addEventListener('click', loadHome);
-    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursement);
+    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursementById);
     getAllReimbursements();
 }
 
-function configureReimbursementView(){
-    console.log('inside configureReimbursementView()');
+function configureReimbursementByIdView(){
+    console.log('inside configureReimbursementByIdView()');
 
     document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('reimbursement-table').setAttribute('hidden', true);
@@ -329,7 +342,7 @@ function configureAllPendingReimbursementsView(){
     console.log('inside configureAllPendingReimbursementsView()');
 
     document.getElementById('home').addEventListener('click', loadHome);
-    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursement);
+    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursementById);
     getAllPendingReimbursements();
 }
 
@@ -337,9 +350,23 @@ function configureAllResolvedReimbursementsView(){
     console.log('inside configureAllResolvedReimbursementsView()');
 
     document.getElementById('home').addEventListener('click', loadHome);
-    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursement);
+    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursementById);
     getAllResolvedReimbursements();
 }
+
+function configureEmployeeHomeView(){
+    console.log('inside configureEmployeeHomeView()');
+
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+    document.getElementById('loggedInUsername').innerText = authUser.username;
+    document.getElementById('all-reimbursements').addEventListener('click', loadAllReimbursements);
+    // document.getElementById('reimbursement-by-id').addEventListener('click', loadReimbursement);
+    // document.getElementById('all-pending-reimbursements').addEventListener('click', loadAllPendingReimbursements);
+    // document.getElementById('all-resolved-reimbursements').addEventListener('click', loadAllResolvedReimbursements);
+    // document.getElementById('new-reimbursement').addEventListener('click', loadAllResolvedReimbursements);
+}
+
+
 
 //--------------------------------Operations-----------------------------------
 
@@ -831,6 +858,7 @@ function getAllResolvedReimbursements(){
         }
     }
 }
+
 
 //----------------------Form Validation--------------------------------- 
 

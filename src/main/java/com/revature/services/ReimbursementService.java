@@ -34,17 +34,11 @@ public class ReimbursementService {
     }
     public Set<Reimbursement> getPendingReimbursementByUserId (int userId){
         Set<Reimbursement> pending = reimbursementRepo.getPendingReimbursementById(userId);
-        if (pending.isEmpty()){
-            throw new ResourceNotFoundException("Employee number: " + userId + " has no pending reimbursement tickets");
-        }
         return pending;
     }
 
     public Set<Reimbursement> getResolvedReimbursementByUserId (int userId){ ;
         Set<Reimbursement> resolved = reimbursementRepo.getResolvedReimbursementById(userId);
-        if (resolved.isEmpty()){
-            throw new ResourceNotFoundException("Employee number: " + userId + " has no resolved reimbursement tickets");
-        }
         return resolved;
     }
 

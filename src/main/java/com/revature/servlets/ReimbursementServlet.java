@@ -9,7 +9,6 @@ import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.Reimbursement;
-import com.revature.models.ReimbursementStatus;
 import com.revature.repos.ReimbursementRepo;
 import com.revature.services.ReimbursementService;
 
@@ -118,13 +117,32 @@ public class ReimbursementServlet extends HttpServlet {
                     if (!resolvedReimbursements.isEmpty()) {
                         allReimbursements.addAll(reimbursementService.getAllResolvedReimbursements());
                     }
+                    if (allReimbursements.isEmpty()){
+                        ErrorResponse err = new ErrorResponse(404, "No Reimbursements found!");
+                        resp.setStatus(404);
+                        respWriter.write(mapper.writeValueAsString(err));
+                        return;
+                    }
                     String allReimbursementsJSON = mapper.writeValueAsString(allReimbursements);
                     respWriter.write(allReimbursementsJSON);
                 } else {
-                    Set<Reimbursement> allReimbursementsByUserId = reimbursementService.getPendingReimbursementByUserId(userId);
-                    allReimbursementsByUserId.addAll(reimbursementService.getResolvedReimbursementByUserId(userId));
-                    String allReimbursementsByUserIdJSON = mapper.writeValueAsString(allReimbursementsByUserId);
-                    respWriter.write(allReimbursementsByUserIdJSON);
+                    Set<Reimbursement> allReimbursements = new HashSet<>();
+                    Set<Reimbursement> pendingReimbursements = reimbursementService.getPendingReimbursementByUserId(userId);
+                    if (!pendingReimbursements.isEmpty()){
+                        allReimbursements.addAll(pendingReimbursements);
+                    }
+                    Set<Reimbursement> resolvedReimbursements = reimbursementService.getResolvedReimbursementByUserId(userId);
+                    if (!resolvedReimbursements.isEmpty()) {
+                        allReimbursements.addAll(reimbursementService.getAllResolvedReimbursements());
+                    }
+                    if (allReimbursements.isEmpty()){
+                        ErrorResponse err = new ErrorResponse(404, "No Reimbursements found!");
+                        resp.setStatus(404);
+                        respWriter.write(mapper.writeValueAsString(err));
+                        return;
+                    }
+                    String allReimbursementsJSON = mapper.writeValueAsString(allReimbursements);
+                    respWriter.write(allReimbursementsJSON);
                 }
             }
             resp.setStatus(200);
