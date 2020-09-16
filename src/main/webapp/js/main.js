@@ -191,6 +191,34 @@ function loadUpdateReimbursement(){
     console.log('inside loadUpdateReimbursement()');
 }
 
+function loadAllPendingReimbursements(){
+    console.log('inside loadAllPendingReimbursements()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('Get', 'allPendingReimbursements.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureAllPendingReimbursementsView();
+        }
+    }
+}
+
+function loadAllResolvedReimbursements(){
+    console.log('inside loadAllResolvedReimbursements()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('Get', 'allResolvedReimbursements.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureAllResolvedReimbursementsView();
+        }
+    }
+}
+
 
 //-------------------------------Configure Views------------------------------
 
@@ -275,6 +303,8 @@ function configureManagerHomeView(){
 
     document.getElementById('all-reimbursements').addEventListener('click', loadAllReimbursements);
     document.getElementById('reimbursement-by-id').addEventListener('click', loadReimbursement);
+    document.getElementById('all-pending-reimbursements').addEventListener('click', loadAllPendingReimbursements);
+    document.getElementById('all-resolved-reimbursements').addEventListener('click', loadAllResolvedReimbursements);
 }
 
 function configureAllReimbursementsView(){
@@ -292,8 +322,23 @@ function configureReimbursementView(){
     document.getElementById('reimbursement-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', getReimbursementById);
     document.getElementById('reimbursement-message').setAttribute('hidden', true);
-    document.getElementById('update-reimbursement').addEventListener('click', loadUpdateReimbursement)
     document.getElementById('approve-deny').setAttribute('hidden', true);
+}
+
+function configureAllPendingReimbursementsView(){
+    console.log('inside configureAllPendingReimbursementsView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursement);
+    getAllPendingReimbursements();
+}
+
+function configureAllResolvedReimbursementsView(){
+    console.log('inside configureAllResolvedReimbursementsView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursement);
+    getAllResolvedReimbursements();
 }
 
 //--------------------------------Operations-----------------------------------
@@ -369,9 +414,11 @@ function getAllUsers() {
                 newBody.appendChild(newRow);
             }
 
-        } else if (xhr.readyState == 4 && xhr.status == 401) {
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
 
             document.getElementById('users-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('users-message').innerText = err.message;
         }
     }
     
@@ -410,9 +457,11 @@ function getUserById() {
                                 "<td>" + requestArr.userRole + "</td>";
 
             newBody.appendChild(newRow);
-        }else if (xhr.readyState == 4 && xhr.status == 401) {
+        }else if (xhr.readyState == 4 && xhr.status != 200) {
 
             document.getElementById('users-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('users-message').innerText = err.message;
         }
     }
 }
@@ -485,9 +534,11 @@ function terminateUserById() {
                                 "<td>" + requestArr.userRole + "</td>";
 
             newBody.appendChild(newRow);
-        }else if (xhr.readyState == 4 && xhr.status == 401) {
+        }else if (xhr.readyState == 4 && xhr.status != 200) {
 
             document.getElementById('users-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('users-message').innerText = err.message;
         }
     }
 }
@@ -551,13 +602,17 @@ function getAllReimbursements() {
             table.appendChild(newBody);
 
             for(let i=0; i < requestArr.length; i++){
-
+                let submitDate = new Date(requestArr[i].submitted);
+                let resolvedDate = new Date(requestArr[i].resolved);
+                if (resolvedDate == "Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)"){
+                    resolvedDate = null;
+                }
                 let newRow = document.createElement("tr");
 
                 newRow.innerHTML = "<td>" + requestArr[i].id + "</td>" +
                                     "<td>" + requestArr[i].amount + "</td>" +
-                                    "<td>" + requestArr[i].submitted + "</td>" +
-                                    "<td>" + requestArr[i].resolved + "</td>" +
+                                    "<td>" + submitDate + "</td>" +
+                                    "<td>" + resolvedDate + "</td>" +
                                     "<td>" + requestArr[i].description + "</td>" +
                                     "<td>" + requestArr[i].authorId + "</td>" +
                                     "<td>" + requestArr[i].resolverId + "</td>" +
@@ -567,9 +622,11 @@ function getAllReimbursements() {
                 newBody.appendChild(newRow);
             }
 
-        } else if (xhr.readyState == 4 && xhr.status == 401) {
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
 
             document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+             document.getElementById('reimbursement-message').innerText = err.message;
         }
     }
 }
@@ -598,10 +655,15 @@ function getReimbursementById() {
             newBody.setAttribute("id", "reimbursement-list");
             table.appendChild(newBody);
              let newRow = document.createElement("tr");
+             let submitDate = new Date(requestArr.submitted);
+            let resolvedDate = new Date(requestArr.resolved);
+            if (resolvedDate == "Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)"){
+                resolvedDate = null;
+            }
 
              newRow.innerHTML = "<td>" + requestArr.id + "</td>" +
                                 "<td>" + requestArr.amount + "</td>" +
-                                "<td>" + requestArr.submitted + "</td>" +
+                                "<td>" + submitDate + "</td>" +
                                 "<td>" + requestArr.resolved + "</td>" +
                                 "<td>" + requestArr.description + "</td>" +
                                 "<td>" + requestArr.authorId + "</td>" +
@@ -615,9 +677,11 @@ function getReimbursementById() {
                 document.getElementById("approve").addEventListener('click', approveReimbursement);
                 document.getElementById("deny").addEventListener('click', denyReimbursement);
             }
-        }else if (xhr.readyState == 4 && xhr.status == 401) {
+        }else if (xhr.readyState == 4 && xhr.status != 200) {
 
             document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('reimbursement-message').innerText = err.message;
         }
     }
 }
@@ -646,6 +710,126 @@ function approveReimbursement(){
 
 function denyReimbursement(){
     console.log('inside denyReimbursement()');
+
+    let nu = document.getElementById('reimbursement-id').value;
+
+     let sentString = "reimbursements?id=" + nu + "&status=denied";
+
+     let xhr = new XMLHttpRequest();
+
+     xhr.open('PUT', sentString);
+     xhr.send();
+     xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            getReimbursementById();
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
+            document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('reimbursement-message').innerText = err.message;
+        }
+    }
+}
+
+function getAllPendingReimbursements(){
+    console.log('inside getAllPendingReimbursements');
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'reimbursements?status=pending');
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            let reimbursementContainer = document.getElementById('reimbursement-container');
+            document.getElementById('reimbursement-message').setAttribute('hidden', true);
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("reimbursement-table");
+            table.removeChild(document.getElementById("reimbursement-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "reimbursement-list");
+            table.appendChild(newBody);
+
+            for(let i=0; i < requestArr.length; i++){
+
+                let newRow = document.createElement("tr");
+                let submitDate = new Date(requestArr[i].submitted);
+                let resolvedDate = new Date(requestArr[i].resolved);
+                if (resolvedDate == "Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)"){
+                    resolvedDate = null;
+                }
+
+                newRow.innerHTML = "<td>" + requestArr[i].id + "</td>" +
+                                    "<td>" + requestArr[i].amount + "</td>" +
+                                    "<td>" + submitDate + "</td>" +
+                                    "<td>" + resolvedDate + "</td>" +
+                                    "<td>" + requestArr[i].description + "</td>" +
+                                    "<td>" + requestArr[i].authorId + "</td>" +
+                                    "<td>" + requestArr[i].resolverId + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementType + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementStatus + "</td>";
+
+                newBody.appendChild(newRow);
+            }
+
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
+
+            document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+             document.getElementById('reimbursement-message').innerText = err.message;
+        }
+    }
+}
+
+function getAllResolvedReimbursements(){
+    console.log('inside getAllResolvedReimbursements');
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'reimbursements?status=resolved');
+    xhr.send();
+
+    xhr.onreadystatechange = function (){
+        if (xhr.readyState == 4 && xhr.status == 200) {
+
+            let reimbursementContainer = document.getElementById('reimbursement-container');
+            document.getElementById('reimbursement-message').setAttribute('hidden', true);
+            requestArr = JSON.parse(xhr.responseText);
+
+            let table = document.getElementById("reimbursement-table");
+            table.removeChild(document.getElementById("reimbursement-list"));
+            let newBody = document.createElement("tbody");
+            newBody.setAttribute("id", "reimbursement-list");
+            table.appendChild(newBody);
+
+            for(let i=0; i < requestArr.length; i++){
+                let submitDate = new Date(requestArr[i].submitted);
+                let resolvedDate = new Date(requestArr[i].resolved);
+                if (resolvedDate == "Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)"){
+                    resolvedDate = null;
+                }
+
+                let newRow = document.createElement("tr");
+
+                newRow.innerHTML = "<td>" + requestArr[i].id + "</td>" +
+                                    "<td>" + requestArr[i].amount + "</td>" +
+                                    "<td>" + submitDate + "</td>" +
+                                    "<td>" + resolvedDate + "</td>" +
+                                    "<td>" + requestArr[i].description + "</td>" +
+                                    "<td>" + requestArr[i].authorId + "</td>" +
+                                    "<td>" + requestArr[i].resolverId + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementType + "</td>" +
+                                    "<td>" + requestArr[i].reimbursementStatus + "</td>";
+
+                newBody.appendChild(newRow);
+            }
+
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
+
+            document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+             document.getElementById('reimbursement-message').innerText = err.message;
+        }
+    }
 }
 
 //----------------------Form Validation--------------------------------- 

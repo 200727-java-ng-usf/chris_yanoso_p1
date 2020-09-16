@@ -50,17 +50,11 @@ public class ReimbursementService {
 
     public Set<Reimbursement> getAllPendingReimbursements () {
         Set<Reimbursement> allPending = reimbursementRepo.getAllPendingReimbursements();
-        if (allPending.isEmpty()){
-            throw new ResourceNotFoundException("There are no current Pending Reimbursements");
-        }
         return allPending;
     }
 
     public Set<Reimbursement> getAllResolvedReimbursements() {
         Set<Reimbursement> allResolved = reimbursementRepo.getAllResolvedReimbursements();
-        if (allResolved.isEmpty()){
-            throw new ResourceNotFoundException("There are no current Resolved Reimbursements");
-        }
         return allResolved;
     }
 

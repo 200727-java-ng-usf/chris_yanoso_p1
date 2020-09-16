@@ -41,7 +41,7 @@ public class ReimbursementRepo {
             e.printStackTrace();
         }
         if (!reimbursement.isPresent()){
-            throw new ResourceNotFoundException("Reimbursement is not found with user id: " + id);
+            throw new ResourceNotFoundException("Reimbursement is not found with id: " + id);
         }
         return reimbursement.get();
     }

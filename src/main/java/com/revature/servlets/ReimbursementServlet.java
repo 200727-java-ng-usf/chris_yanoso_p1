@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 @WebServlet("/reimbursements/*")
@@ -68,6 +70,12 @@ public class ReimbursementServlet extends HttpServlet {
                     case "resolved":
                         if (principal.getRole().equalsIgnoreCase("Manager")) {
                             Set<Reimbursement> resolvedReimbursements = reimbursementService.getAllResolvedReimbursements();
+                            if (resolvedReimbursements.isEmpty()){
+                                ErrorResponse err = new ErrorResponse(404, "There are no Resolved reimbursements");
+                                respWriter.write(mapper.writeValueAsString(err));
+                                resp.setStatus(404);
+                                return;
+                            }
                             String resolvedReimbursementsJSON = mapper.writeValueAsString(resolvedReimbursements);
                             respWriter.write(resolvedReimbursementsJSON);
                         } else {
@@ -79,6 +87,12 @@ public class ReimbursementServlet extends HttpServlet {
                     case "pending":
                         if (principal.getRole().equalsIgnoreCase("Manager")) {
                             Set<Reimbursement> pendingReimbursements = reimbursementService.getAllPendingReimbursements();
+                            if (pendingReimbursements.isEmpty()){
+                                ErrorResponse err = new ErrorResponse(404, "There are no Pending reimbursements");
+                                respWriter.write(mapper.writeValueAsString(err));
+                                resp.setStatus(404);
+                                return;
+                            }
                             String pendingReimbursementsJSON = mapper.writeValueAsString(pendingReimbursements);
                             respWriter.write(pendingReimbursementsJSON);
                         } else {
@@ -95,8 +109,15 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             } else {
                 if (principal.getRole().equalsIgnoreCase("Manager")) {
-                    Set<Reimbursement> allReimbursements = reimbursementService.getAllPendingReimbursements();
-                    allReimbursements.addAll(reimbursementService.getAllResolvedReimbursements());
+                    Set<Reimbursement> allReimbursements = new HashSet<>();
+                    Set<Reimbursement> pendingReimbursements = reimbursementService.getAllPendingReimbursements();
+                    if (!pendingReimbursements.isEmpty()){
+                        allReimbursements.addAll(pendingReimbursements);
+                    }
+                    Set<Reimbursement> resolvedReimbursements = reimbursementService.getAllResolvedReimbursements();
+                    if (!resolvedReimbursements.isEmpty()) {
+                        allReimbursements.addAll(reimbursementService.getAllResolvedReimbursements());
+                    }
                     String allReimbursementsJSON = mapper.writeValueAsString(allReimbursements);
                     respWriter.write(allReimbursementsJSON);
                 } else {
@@ -189,16 +210,21 @@ public class ReimbursementServlet extends HttpServlet {
                 if (principal.getRole().equalsIgnoreCase("Manager")){
                     switch(statusParam.toLowerCase()){
                         case "approved":
-                            statusReimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
+                            statusReimbursement.setResolverId(principal.getId());
+                            Timestamp resolvedApprove = new Timestamp(System.currentTimeMillis());
+                            statusReimbursement.setResolved(resolvedApprove);
+                            reimbursementService.approveReimbursement(statusReimbursement);
                             break;
-                        case "Denied":
-                            statusReimbursement.setReimbursementStatus(ReimbursementStatus.DENIED);
+                        case "denied":
+                            statusReimbursement.setResolverId(principal.getId());
+                            Timestamp resolvedDeny = new Timestamp(System.currentTimeMillis());
+                            statusReimbursement.setResolved(resolvedDeny);
+                            reimbursementService.denyReimbursement(statusReimbursement);
                             break;
                         case "default":
-                            System.out.println("did not get to approved");
+                            System.out.println("bad param");
                             break;
                     }
-                    reimbursementService.updateReimbursement(statusReimbursement);
                     respWriter.write(mapper.writeValueAsString(statusReimbursement));
 
                 } else {

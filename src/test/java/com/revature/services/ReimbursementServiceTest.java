@@ -101,14 +101,14 @@ public class ReimbursementServiceTest {
         Assert.assertEquals(testSet,actualSet);
     }
 
-    @Test
-    public void getAllPendingReimbursementsNotFound(){
-        Set<Reimbursement> emptySet = new HashSet<>();
-        Mockito.when(reimbursementRepo.getAllPendingReimbursements()).thenReturn(emptySet);
-        execeptionRule.expect(ResourceNotFoundException.class);
-        execeptionRule.expectMessage("There are no current Pending Reimbursements");
-        reimbursementService.getAllPendingReimbursements();
-    }
+//    @Test
+//    public void getAllPendingReimbursementsNotFound(){
+//        Set<Reimbursement> emptySet = new HashSet<>();
+//        Mockito.when(reimbursementRepo.getAllPendingReimbursements()).thenReturn(emptySet);
+//        execeptionRule.expect(ResourceNotFoundException.class);
+//        execeptionRule.expectMessage("There are no current Pending Reimbursements");
+//        reimbursementService.getAllPendingReimbursements();
+    //}
 
     @Test
     public void getAllPendingReimbursementsTrue(){
@@ -119,14 +119,14 @@ public class ReimbursementServiceTest {
         Assert.assertEquals(testSet, actualSet);
     }
 
-    @Test
-    public void getAllResolvedReimbursementsNotFound(){
-        Set<Reimbursement> emptySet = new HashSet<>();
-        Mockito.when(reimbursementRepo.getAllResolvedReimbursements()).thenReturn(emptySet);
-        execeptionRule.expect(ResourceNotFoundException.class);
-        execeptionRule.expectMessage("There are no current Resolved Reimbursements");
-        reimbursementService.getAllResolvedReimbursements();
-    }
+//    @Test
+//    public void getAllResolvedReimbursementsNotFound(){
+//        Set<Reimbursement> emptySet = new HashSet<>();
+//        Mockito.when(reimbursementRepo.getAllResolvedReimbursements()).thenReturn(emptySet);
+//        execeptionRule.expect(ResourceNotFoundException.class);
+//        execeptionRule.expectMessage("There are no current Resolved Reimbursements");
+//        reimbursementService.getAllResolvedReimbursements();
+//    }
 
     @Test
     public void getAllResolvedReimbursementsTrue(){
