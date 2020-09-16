@@ -185,8 +185,8 @@ public class ReimbursementServlet extends HttpServlet {
             String statusParam = req.getParameter("status");
             if (idParam != null){
                 int id = Integer.parseInt(idParam);
-                if (principal.getRole().equalsIgnoreCase("Admin")){
-                    Reimbursement statusReimbursement = reimbursementService.getReimbursementById(id);
+                Reimbursement statusReimbursement = reimbursementService.getReimbursementById(id);
+                if (principal.getRole().equalsIgnoreCase("Manager")){
                     switch(statusParam.toLowerCase()){
                         case "approved":
                             statusReimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
@@ -195,33 +195,33 @@ public class ReimbursementServlet extends HttpServlet {
                             statusReimbursement.setReimbursementStatus(ReimbursementStatus.DENIED);
                             break;
                         case "default":
+                            System.out.println("did not get to approved");
                             break;
                     }
                     reimbursementService.updateReimbursement(statusReimbursement);
                     respWriter.write(mapper.writeValueAsString(statusReimbursement));
 
                 } else {
-                    Reimbursement oldReimbursement = reimbursementService.getReimbursementById(id);
                     Reimbursement newReimbursement = mapper.readValue(req.getInputStream(), Reimbursement.class);
-                    if (!oldReimbursement.equals(newReimbursement)){
-                        if (oldReimbursement.getAmount() != newReimbursement.getAmount()){
+                    if (!statusReimbursement.equals(newReimbursement)){
+                        if (statusReimbursement.getAmount() != newReimbursement.getAmount()){
                             if (newReimbursement.getAmount() > 0){
-                                oldReimbursement.setAmount(newReimbursement.getAmount());
+                                statusReimbursement.setAmount(newReimbursement.getAmount());
                             }
                         }
-                        if (!oldReimbursement.getDescription().equals(newReimbursement.getDescription())){
+                        if (!statusReimbursement.getDescription().equals(newReimbursement.getDescription())){
                             if (newReimbursement.getDescription() != null && newReimbursement.getDescription().trim().equals("")){
-                                oldReimbursement.setDescription(newReimbursement.getDescription());
+                                statusReimbursement.setDescription(newReimbursement.getDescription());
                             }
                         }
-                        if (!oldReimbursement.getReimbursementType().equals(newReimbursement.getReimbursementType())){
+                        if (!statusReimbursement.getReimbursementType().equals(newReimbursement.getReimbursementType())){
                             if (newReimbursement.getReimbursementType() != null && newReimbursement.getReimbursementType().toString().trim().equals("")){
-                                oldReimbursement.setReimbursementType(newReimbursement.getReimbursementType());
+                                statusReimbursement.setReimbursementType(newReimbursement.getReimbursementType());
                             }
                         }
-                        reimbursementService.updateReimbursement(oldReimbursement);
+                        reimbursementService.updateReimbursement(statusReimbursement);
                     }
-                    String reimbursementJSON = mapper.writeValueAsString(oldReimbursement);
+                    String reimbursementJSON = mapper.writeValueAsString(statusReimbursement);
                     respWriter.write(reimbursementJSON);
                 }
                 resp.setStatus(200);
