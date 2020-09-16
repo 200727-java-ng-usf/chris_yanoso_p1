@@ -59,9 +59,9 @@ public class RequestViewHelper {
             case "/allResolvedReimbursements.view":
             case "/reimbursement/allResolvedReimbursements.view":
                 return "partials/all-resolved-reimbursements.html";
-            case "/allReimbursementsByUserId.view":
-            case "/reimbursement/allReimbursementsByUserId.view":
-                return "partials/all-reimbursements/html";
+            case "/userReimbursementById.view":
+            case "/reimbursement/userReimbursementById.view":
+                return "partials/user-reimbursement-by-id.html";
             default:
                 return null;
         }

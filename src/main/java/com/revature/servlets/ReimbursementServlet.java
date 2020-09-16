@@ -79,6 +79,12 @@ public class ReimbursementServlet extends HttpServlet {
                             respWriter.write(resolvedReimbursementsJSON);
                         } else {
                             Set<Reimbursement> resolvedReimbursementByUserId = reimbursementService.getResolvedReimbursementByUserId(userId);
+                            if (resolvedReimbursementByUserId.isEmpty()){
+                                ErrorResponse err = new ErrorResponse(404, "There are no Resolved reimbursements");
+                                respWriter.write(mapper.writeValueAsString(err));
+                                resp.setStatus(404);
+                                return;
+                            }
                             String resolvedReimbursementByUserIdJSON = mapper.writeValueAsString(resolvedReimbursementByUserId);
                             respWriter.write(resolvedReimbursementByUserIdJSON);
                         }
@@ -96,6 +102,12 @@ public class ReimbursementServlet extends HttpServlet {
                             respWriter.write(pendingReimbursementsJSON);
                         } else {
                             Set<Reimbursement> pendingReimbursementByUserId = reimbursementService.getPendingReimbursementByUserId(userId);
+                            if (pendingReimbursementByUserId.isEmpty()){
+                                ErrorResponse err = new ErrorResponse(404, "There are no Pending reimbursements");
+                                respWriter.write(mapper.writeValueAsString(err));
+                                resp.setStatus(404);
+                                return;
+                            }
                             String pendingReimbursementByUserIdJSON = mapper.writeValueAsString(pendingReimbursementByUserId);
                             respWriter.write(pendingReimbursementByUserIdJSON);
                         }
