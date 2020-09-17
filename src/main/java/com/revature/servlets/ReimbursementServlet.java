@@ -182,9 +182,12 @@ public class ReimbursementServlet extends HttpServlet {
 
         ObjectMapper mapper = new ObjectMapper();
         PrintWriter respWriter = resp.getWriter();
+        String principalJSON = (String) req.getSession().getAttribute("principal");
+        Principal principal = mapper.readValue(principalJSON, Principal.class);
 
         try{
             Reimbursement newReimbursement = mapper.readValue(req.getInputStream(), Reimbursement.class);
+            newReimbursement.setAuthorId(principal.getId());
             reimbursementService.createNewReimbursement(newReimbursement);
             System.out.println(newReimbursement);
             String newReimbursementJSON = mapper.writeValueAsString(newReimbursement);

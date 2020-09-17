@@ -186,6 +186,10 @@ function loadAllReimbursements(){
 function loadReimbursementById() {
     console.log('inside loadReimbursementById()');
 
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+    if (authUser.role != "Manager"){
+        loadUserReimbursementById();
+    }
     let xhr = new XMLHttpRequest();
     xhr.open('Get', 'reimbursementById.view');
     xhr.send();
@@ -243,6 +247,19 @@ function loadAllResolvedReimbursements(){
     }
 }
 
+function loadNewReimbursement() {
+    console.log('inside loadNewReimbursement()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('Get', 'newReimbursements.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureNewReimbursementsView();
+        }
+    }
+}
 
 
 //-------------------------------Configure Views------------------------------
@@ -295,9 +312,6 @@ function configureRegisterView(){
     console.log('inside configureRegisterView()');
 
     document.getElementById('reg-message').setAttribute('hidden', true);
-
-    //document.getElementById('reg-username').addEventListener('blur', isUsernameAvailable);
-   // document.getElementById('email').addEventListener('blur', isEmailAvailable);
 
     //document.getElementById('register').setAttribute('disabled', true);
    // document.getElementById('reg-button-container').addEventListener('mouseover', validateRegisterForm);
@@ -377,7 +391,7 @@ function configureEmployeeHomeView(){
     document.getElementById('reimbursement-by-id').addEventListener('click', loadUserReimbursementById);
     document.getElementById('all-pending-reimbursements').addEventListener('click', loadAllPendingReimbursements);
     document.getElementById('all-resolved-reimbursements').addEventListener('click', loadAllResolvedReimbursements);
-    //document.getElementById('new-reimbursement').addEventListener('click', loadAllResolvedReimbursements);
+    document.getElementById('new-reimbursement').addEventListener('click', loadNewReimbursement);
 }
 
 function configureUserReimbursementByIdView() {
@@ -390,6 +404,12 @@ function configureUserReimbursementByIdView() {
     document.getElementById("update-button").addEventListener('click', loadUpdateReimbursement);
 }
 
+function configureNewReimbursementsView(){
+    console.log('inside configureNewReimbursementsView()');
+
+    document.getElementById('reg-message').setAttribute('hidden', true);
+    document.getElementById('register').addEventListener('click', registerNewReimbursement);
+}
 
 
 //--------------------------------Operations-----------------------------------
@@ -930,6 +950,36 @@ function getUserReimbursementById(){
             document.getElementById('reimbursement-message').removeAttribute('hidden');
             let err = JSON.parse(xhr.responseText);
             document.getElementById('reimbursement-message').innerText = err.message;
+        }
+    }
+}
+
+function registerNewReimbursement() {
+    console.log('inside registerNewReimbursement()');
+
+    let am = document.getElementById('am').value;
+    let de = document.getElementById('de').value;
+    let type = document.querySelector('input[name = "type"]:checked').value;
+    let newReimbursement = {
+        amount: am,
+        description: de,
+        reimbursementType: type
+    }
+
+    let newReimbursementJSON = JSON.stringify(newReimbursement);
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.open('POST', 'reimbursements');
+    xhr.send(newReimbursementJSON);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 201) {
+            loadHome();
+        } else if (xhr.readyState == 4 && xhr.status != 201) {
+            document.getElementById('reg-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('reg-message').innerText = err.message;
         }
     }
 }

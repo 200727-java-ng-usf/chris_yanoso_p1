@@ -9,6 +9,7 @@ import com.revature.repos.ReimbursementRepo;
 
 import java.io.IOException;
 
+import java.sql.Timestamp;
 import java.util.Set;
 
 public class ReimbursementService {
@@ -21,7 +22,9 @@ public class ReimbursementService {
         if (!isReimbursementValid(reimbursement)){
             throw new InvalidRequestException("Invalid Reimbursement field values provided during ticket creation!");
         }
-
+        Timestamp submitted = new Timestamp(System.currentTimeMillis());
+        reimbursement.setSubmitted(submitted);
+        reimbursement.setReimbursementStatus(ReimbursementStatus.PENDING);
         reimbursementRepo.createNew(reimbursement);
     }
 
@@ -70,7 +73,7 @@ public class ReimbursementService {
         if (reimbursement == null) return false;
         if (reimbursement.getAmount() == 0 || reimbursement.getAmount() < 0) return false;
         if (reimbursement.getDescription() == null || reimbursement.getDescription().trim().equals("")) return false;
-        if (reimbursement.getReceipt() == null || reimbursement.getReceipt().trim().equals("")) return false;
+        if (reimbursement.getReimbursementType() == null) return false;
         return true;
     }
 }
