@@ -263,7 +263,7 @@ public class ReimbursementServlet extends HttpServlet {
 
                 } else {
                     Reimbursement newReimbursement = mapper.readValue(req.getInputStream(), Reimbursement.class);
-                    if (newReimbursement.getReimbursementStatus() == ReimbursementStatus.APPROVED || newReimbursement.getReimbursementStatus() == ReimbursementStatus.DENIED){
+                    if (statusReimbursement.getReimbursementStatus() == ReimbursementStatus.APPROVED || statusReimbursement.getReimbursementStatus() == ReimbursementStatus.DENIED){
                         ErrorResponse err = new ErrorResponse(404, "You may not Update a resolved Reimbursement!");
                         resp.setStatus(404);
                         respWriter.write(mapper.writeValueAsString(err));

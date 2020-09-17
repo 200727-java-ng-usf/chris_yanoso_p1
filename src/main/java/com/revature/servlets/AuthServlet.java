@@ -32,6 +32,8 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
         resp.setStatus(204);
+        String principalJSON = (String) req.getSession().getAttribute("principal");
+        System.out.println(principalJSON);
     }
 
     @Override

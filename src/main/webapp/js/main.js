@@ -4,6 +4,8 @@ window.onload = function() {
     loadLogin();
     document.getElementById('toLogin').addEventListener('click', loadLogin);
     document.getElementById('toHome').addEventListener('click', loadHome);
+    document.getElementById('toReimbursements').addEventListener('click', loadAllReimbursements);
+    document.getElementById('toLogout').addEventListener('click', logout)
 }
 
 //------------------------------Load Views---------------------------------
@@ -24,6 +26,7 @@ function loadLogin() {
         }
     }
 }
+
 
 function loadHome() {
 
@@ -172,6 +175,12 @@ function loadBadHome(){
 function loadAllReimbursements(){
     console.log('inside loadAllReimbursements()');
 
+    if (!localStorage.getItem('authUser')) {
+        console.log('No user logged in, navigating to login screen');
+        loadLogin();
+        return;
+    }
+
     let xhr = new XMLHttpRequest();
     xhr.open('Get', 'allReimbursements.view');
     xhr.send();
@@ -182,6 +191,8 @@ function loadAllReimbursements(){
         }
     }
 }
+
+
 
 function loadReimbursementById() {
     console.log('inside loadReimbursementById()');
@@ -300,7 +311,7 @@ function configureAllUsersView(){
     console.log('inside configureAllUsersView()');
 
 
-    document.getElementById('home').addEventListener('click', loadAdminHome);
+    document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('single-user').addEventListener('click', loadUser);
     getAllUsers();
 
@@ -323,8 +334,8 @@ function configureRegisterView(){
 
     document.getElementById('reg-message').setAttribute('hidden', true);
 
-    //document.getElementById('register').setAttribute('disabled', true);
-   // document.getElementById('reg-button-container').addEventListener('mouseover', validateRegisterForm);
+    document.getElementById('register').setAttribute('disabled', true);
+    document.getElementById('reg-button-container').addEventListener('mouseover', validateRegisterForm);
     document.getElementById('register').addEventListener('click', register);
 }
 
@@ -333,8 +344,9 @@ function configureTerminateView(){
 
     document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('user-table').setAttribute('hidden', true);
-    document.getElementById('search-id').addEventListener('click', terminateUserById);
+    document.getElementById('t-id').addEventListener('click', terminateUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
+    document.getElementById('search-id').addEventListener('click', getUserById);
 }
 
 function configureUpdateUserView(){
@@ -362,7 +374,12 @@ function configureAllReimbursementsView(){
     console.log('inside configureAllReimbursementsView()');
 
     document.getElementById('home').addEventListener('click', loadHome);
-    document.getElementById('single-reimbursement').addEventListener('click', loadReimbursementById);
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+    if (authUser.role == "Manager"){
+        document.getElementById('single-reimbursement').addEventListener('click', loadReimbursementById);
+    } else {
+        document.getElementById('single-reimbursement').addEventListener('click', loadUserReimbursementById);
+    }
     getAllReimbursements();
 }
 
@@ -420,6 +437,8 @@ function configureNewReimbursementsView(){
 
     document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('reg-message').setAttribute('hidden', true);
+    document.getElementById('register').setAttribute('disabled', true);
+    document.getElementById('reg-button-container').addEventListener('mouseover', validateReimbursementForm);
     document.getElementById('register').addEventListener('click', registerNewReimbursement);
 }
 
@@ -472,7 +491,18 @@ function login(){
         }
     }
 }
-
+function sortJSON(requestArr) {
+for (let i = 0; i < requestArr.length -1; i++){
+    for (let j = 0; j < requestArr.length - i - 1; j++){
+        if (requestArr[j].id > requestArr[j+1].id){
+            let temp = requestArr[j];
+            requestArr[j] = requestArr[j+1];
+            requestArr[j+1] = temp;
+        }
+    }
+}
+return requestArr;
+}
 function getAllUsers() {
 
     console.log('inside getAllUsers');
@@ -486,14 +516,14 @@ function getAllUsers() {
 
             let usersContainer = document.getElementById('users-container');
             document.getElementById('users-message').setAttribute('hidden', true);
-            requestArr = JSON.parse(xhr.responseText);
+            requestArrUnSorted = JSON.parse(xhr.responseText);
 
             let table = document.getElementById("user-table");
             table.removeChild(document.getElementById("user-list"));
             let newBody = document.createElement("tbody");
             newBody.setAttribute("id", "user-list");
             table.appendChild(newBody);
-
+            requestArr = sortJSON(requestArrUnSorted);
             for(let i=0; i < requestArr.length; i++){
 
                 let newRow = document.createElement("tr");
@@ -569,13 +599,14 @@ function register() {
     let email = document.getElementById('email').value;
     let un = document.getElementById('reg-username').value;
     let pw = document.getElementById('reg-password').value;
-
+    let type = document.querySelector('input[name = "type"]:checked').value;
     let newUser = {
         firstName: fn,
         lastName: ln,
         email: email,
         username: un,
-        password: pw
+        password: pw,
+        userRole: type
     }
 
     let newUserJSON = JSON.stringify(newUser);
@@ -646,6 +677,7 @@ function updateUser(){
     let email = document.getElementById('email').value;
     let un = document.getElementById('reg-username').value;
     let pw = document.getElementById('reg-password').value;
+    let type = document.querySelector('input[name = "type"]:checked').value;
 
 
     let newUser = {
@@ -653,7 +685,8 @@ function updateUser(){
         lastName: ln,
         email: email,
         username: un,
-        password: pw
+        password: pw,
+        userRole: type
     }
 
     let newUserJSON = JSON.stringify(newUser);
@@ -687,14 +720,14 @@ function getAllReimbursements() {
 
             let reimbursementContainer = document.getElementById('reimbursement-container');
             document.getElementById('reimbursement-message').setAttribute('hidden', true);
-            requestArr = JSON.parse(xhr.responseText);
+            requestArrUnSorted = JSON.parse(xhr.responseText);
 
             let table = document.getElementById("reimbursement-table");
             table.removeChild(document.getElementById("reimbursement-list"));
             let newBody = document.createElement("tbody");
             newBody.setAttribute("id", "reimbursement-list");
             table.appendChild(newBody);
-
+            requestArr = sortJSON(requestArrUnSorted);
             for(let i=0; i < requestArr.length; i++){
                 let submitDate = new Date(requestArr[i].submitted);
                 let resolvedDate = new Date(requestArr[i].resolved);
@@ -836,14 +869,14 @@ function getAllPendingReimbursements(){
 
             let reimbursementContainer = document.getElementById('reimbursement-container');
             document.getElementById('reimbursement-message').setAttribute('hidden', true);
-            requestArr = JSON.parse(xhr.responseText);
+            requestArrUnSorted = JSON.parse(xhr.responseText);
 
             let table = document.getElementById("reimbursement-table");
             table.removeChild(document.getElementById("reimbursement-list"));
             let newBody = document.createElement("tbody");
             newBody.setAttribute("id", "reimbursement-list");
             table.appendChild(newBody);
-
+            requestArr = sortJSON(requestArrUnSorted);
             for(let i=0; i < requestArr.length; i++){
 
                 let newRow = document.createElement("tr");
@@ -887,14 +920,14 @@ function getAllResolvedReimbursements(){
 
             let reimbursementContainer = document.getElementById('reimbursement-container');
             document.getElementById('reimbursement-message').setAttribute('hidden', true);
-            requestArr = JSON.parse(xhr.responseText);
+            requestArrUnSorted = JSON.parse(xhr.responseText);
 
             let table = document.getElementById("reimbursement-table");
             table.removeChild(document.getElementById("reimbursement-list"));
             let newBody = document.createElement("tbody");
             newBody.setAttribute("id", "reimbursement-list");
             table.appendChild(newBody);
-
+            requestArr = sortJSON(requestArrUnSorted);
             for(let i=0; i < requestArr.length; i++){
                 let submitDate = new Date(requestArr[i].submitted);
                 let resolvedDate = new Date(requestArr[i].resolved);
@@ -1038,6 +1071,22 @@ function updateReimbursement() {
         }
     }
 }
+function logout(){
+    console.log('inside logout()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'auth');
+    xhr.send()
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 204){
+            localStorage.removeItem('authUser');
+            loadLogin();
+        } else {
+            console.log(JSON.parse(xhr.responseText));
+        }
+    }
+}
 
 //----------------------Form Validation--------------------------------- 
 
@@ -1063,4 +1112,43 @@ function validateLoginForm() {
         document.getElementById('login-message').setAttribute('hidden', true);
     }
 
+}
+
+function validateRegisterForm() {
+
+    console.log('inside validateRegisterForm()');
+
+    let fn = document.getElementById('fn').value;
+    let ln = document.getElementById('ln').value;
+    let email = document.getElementById('email').value;
+    let un = document.getElementById('reg-username').value;
+    let pw = document.getElementById('reg-password').value;
+    let type = document.querySelector('input[name = "type"]:checked').value; 
+
+    if (!fn || !ln || !email || !un || !pw || !type) {
+        document.getElementById('reg-message').removeAttribute('hidden');
+        document.getElementById('reg-message').innerText = 'You must provided values for all fields in the form!'
+        document.getElementById('register').setAttribute('disabled', true);
+    } else {
+        document.getElementById('register').removeAttribute('disabled');
+        document.getElementById('reg-message').setAttribute('hidden', true);
+    }
+}
+
+function validateReimbursementForm() {
+
+    console.log('inside validateReimbursementForm()');
+
+    let am = document.getElementById('am').value;
+    let de = document.getElementById('de').value;
+    let type = document.querySelector('input[name = "type"]:checked').value;
+
+    if (!am || !de || !type){
+        document.getElementById('reg-message').removeAttribute('hidden');
+        document.getElementById('reg-message').innerText = 'You must provided values for all fields in the form!'
+        document.getElementById('register').setAttribute('disabled', true);
+    } else {
+        document.getElementById('register').removeAttribute('disabled');
+        document.getElementById('reg-message').setAttribute('hidden', true);
+    }
 }

@@ -133,8 +133,9 @@ public class UserChangeServlet extends HttpServlet {
                             oldUser.setLastName(newUser.getLastName());
                         }
                     }
+                    System.out.println(newUser.getUserRole());
                     if (!oldUser.getUserRole().equals(newUser.getUserRole())) {
-                        if (newUser.getUserRole() != null && !newUser.getLastName().trim().equals("")) {
+                        if (newUser.getUserRole() != null && !newUser.getUserRole().toString().trim().equals("")) {
                             oldUser.setUserRole(newUser.getUserRole());
                         }
                     }
