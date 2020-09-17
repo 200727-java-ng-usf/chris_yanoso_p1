@@ -217,6 +217,16 @@ function loadUserReimbursementById() {
 
 function loadUpdateReimbursement(){
     console.log('inside loadUpdateReimbursement()');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('Get', 'updateReimbursement.view');
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            APP_VIEW.innerHTML = xhr.responseText;
+            configureUpdateReimbursementView();
+        }
+    }
 }
 
 function loadAllPendingReimbursements(){
@@ -321,7 +331,7 @@ function configureRegisterView(){
 function configureTerminateView(){
     console.log('inside configureTerminateView()');
 
-    document.getElementById('home').addEventListener('click', loadAdminHome);
+    document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', terminateUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
@@ -330,7 +340,7 @@ function configureTerminateView(){
 function configureUpdateUserView(){
     console.log('inside configureUpdateUserView()');
 
-    document.getElementById('home').addEventListener('click', loadAdminHome);
+    document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('user-table').setAttribute('hidden', true);
     document.getElementById('search-id').addEventListener('click', getUserById);
     document.getElementById('users-message').setAttribute('hidden', true);
@@ -392,6 +402,7 @@ function configureEmployeeHomeView(){
     document.getElementById('all-pending-reimbursements').addEventListener('click', loadAllPendingReimbursements);
     document.getElementById('all-resolved-reimbursements').addEventListener('click', loadAllResolvedReimbursements);
     document.getElementById('new-reimbursement').addEventListener('click', loadNewReimbursement);
+    document.getElementById('update-reimbursement').addEventListener('click', loadUpdateReimbursement);
 }
 
 function configureUserReimbursementByIdView() {
@@ -407,8 +418,20 @@ function configureUserReimbursementByIdView() {
 function configureNewReimbursementsView(){
     console.log('inside configureNewReimbursementsView()');
 
+    document.getElementById('home').addEventListener('click', loadHome);
     document.getElementById('reg-message').setAttribute('hidden', true);
     document.getElementById('register').addEventListener('click', registerNewReimbursement);
+}
+
+function configureUpdateReimbursementView(){
+    console.log('inside configureUpdateReimbursementView()');
+
+    document.getElementById('home').addEventListener('click', loadHome);
+    document.getElementById('reimbursement-table').setAttribute('hidden', true);
+    document.getElementById('search-id').addEventListener('click', getUserReimbursementById);
+    document.getElementById('reimbursement-message').setAttribute('hidden', true);
+    document.getElementById('update').addEventListener('click', updateReimbursement);
+
 }
 
 
@@ -984,6 +1007,37 @@ function registerNewReimbursement() {
     }
 }
 
+function updateReimbursement() {
+    console.log('inside registerNewReimbursement()');
+
+    let id = document.getElementById('reimbursement-id').value;
+    let am = document.getElementById('am').value;
+    let de = document.getElementById('de').value;
+    let type = document.querySelector('input[name = "type"]:checked').value;
+    let newReimbursement = {
+        amount: am,
+        description: de,
+        reimbursementType: type
+    }
+
+    let newReimbursementJSON = JSON.stringify(newReimbursement);
+    console.log(newReimbursement);
+    let xhr = new XMLHttpRequest();
+
+    let sentString = 'reimbursements?id=' + id;
+    xhr.open('PUT', sentString);
+    xhr.send(newReimbursementJSON);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            getUserReimbursementById();
+        } else if (xhr.readyState == 4 && xhr.status != 200) {
+            document.getElementById('reimbursement-message').removeAttribute('hidden');
+            let err = JSON.parse(xhr.responseText);
+            document.getElementById('reimbursement-message').innerText = err.message;
+        }
+    }
+}
 
 //----------------------Form Validation--------------------------------- 
 

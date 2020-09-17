@@ -9,6 +9,7 @@ import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.Reimbursement;
+import com.revature.models.ReimbursementStatus;
 import com.revature.repos.ReimbursementRepo;
 import com.revature.services.ReimbursementService;
 
@@ -237,7 +238,7 @@ public class ReimbursementServlet extends HttpServlet {
         try {
             String idParam = req.getParameter("id");
             String statusParam = req.getParameter("status");
-            if (idParam != null){
+            if (!idParam.equals("")){
                 int id = Integer.parseInt(idParam);
                 Reimbursement statusReimbursement = reimbursementService.getReimbursementById(id);
                 if (principal.getRole().equalsIgnoreCase("Manager")){
@@ -262,6 +263,12 @@ public class ReimbursementServlet extends HttpServlet {
 
                 } else {
                     Reimbursement newReimbursement = mapper.readValue(req.getInputStream(), Reimbursement.class);
+                    if (newReimbursement.getReimbursementStatus() == ReimbursementStatus.APPROVED || newReimbursement.getReimbursementStatus() == ReimbursementStatus.DENIED){
+                        ErrorResponse err = new ErrorResponse(404, "You may not Update a resolved Reimbursement!");
+                        resp.setStatus(404);
+                        respWriter.write(mapper.writeValueAsString(err));
+                        return;
+                    }
                     if (!statusReimbursement.equals(newReimbursement)){
                         if (statusReimbursement.getAmount() != newReimbursement.getAmount()){
                             if (newReimbursement.getAmount() > 0){
@@ -269,12 +276,12 @@ public class ReimbursementServlet extends HttpServlet {
                             }
                         }
                         if (!statusReimbursement.getDescription().equals(newReimbursement.getDescription())){
-                            if (newReimbursement.getDescription() != null && newReimbursement.getDescription().trim().equals("")){
+                            if (newReimbursement.getDescription() != null && !newReimbursement.getDescription().trim().equals("")){
                                 statusReimbursement.setDescription(newReimbursement.getDescription());
                             }
                         }
                         if (!statusReimbursement.getReimbursementType().equals(newReimbursement.getReimbursementType())){
-                            if (newReimbursement.getReimbursementType() != null && newReimbursement.getReimbursementType().toString().trim().equals("")){
+                            if (newReimbursement.getReimbursementType() != null && !newReimbursement.getReimbursementType().toString().trim().equals("")){
                                 statusReimbursement.setReimbursementType(newReimbursement.getReimbursementType());
                             }
                         }

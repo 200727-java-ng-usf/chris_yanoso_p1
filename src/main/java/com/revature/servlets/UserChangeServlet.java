@@ -98,7 +98,7 @@ public class UserChangeServlet extends HttpServlet {
         try {
             String idParam = req.getParameter("id");
             int id = Integer.parseInt(idParam);
-            if (idParam != null) {
+            if (!idParam.equals("")){
                 User oldUser = userService.getUserById(id).get();
                 User newUser = mapper.readValue(req.getInputStream(), User.class);
                 if (!oldUser.equals(newUser)) {
