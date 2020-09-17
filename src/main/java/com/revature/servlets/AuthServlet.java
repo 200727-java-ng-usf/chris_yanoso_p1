@@ -57,6 +57,7 @@ public class AuthServlet extends HttpServlet {
 
             respWriter.write(mapper.writeValueAsString(principal));
             resp.setStatus(200);
+            System.out.println(principal);
 
         } catch (MismatchedInputException | InvalidRequestException e) {
 
