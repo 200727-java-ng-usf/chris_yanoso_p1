@@ -189,6 +189,16 @@ function loadAllReimbursements(){
         loadLogin();
         return;
     }
+    let authUser = localStorage.getItem('authUser');
+    if (authUser.role != "Admin"){
+        if (authUser.role != "Employee"){
+            if (authUser.role != "Manger"){
+                loadHome();
+                return;
+            }
+        }
+        
+    }
 
     let xhr = new XMLHttpRequest();
     xhr.open('Get', 'allReimbursements.view');
