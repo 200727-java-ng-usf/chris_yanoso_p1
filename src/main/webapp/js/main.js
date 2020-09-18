@@ -189,17 +189,22 @@ function loadAllReimbursements(){
         loadLogin();
         return;
     }
-    let authUser = localStorage.getItem('authUser');
-    if (authUser.role != "Admin"){
-        if (authUser.role != "Employee"){
-            if (authUser.role != "Manger"){
-                loadHome();
-                return;
+    let authUser = JSON.parse(localStorage.getItem('authUser'));
+            console.log(authUser.role);
+            if (authUser.role == 'Admin'){
+                loadALLUserReimbursements();
+            } else if (authUser.role == 'Manager'){
+                loadALLUserReimbursements();
+            } else if (authUser.role == 'Employee'){
+                loadALLUserReimbursements();
+            } else {
+                loadBadHome();
             }
-        }
-        
-    }
+}
 
+function loadALLUserReimbursements(){
+
+    
     let xhr = new XMLHttpRequest();
     xhr.open('Get', 'allReimbursements.view');
     xhr.send();
