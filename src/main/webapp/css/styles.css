@@ -1,2 +1,5 @@
 body {background-color: #FAEBD7;}
 head {background-color: #FAEBD7;}
+.navbar-toggler-icon {
+    color: white;
+}
