@@ -1,0 +1,36 @@
+<div id ='reimbursement-by-id-container'>
+    <div id = 'reimbursement-container'>
+        <div class="form-group">
+            <label for="reimbursement-id">Id Number</label>
+            <input type="number" class="form-control" id="reimbursement-id" placeholder="Please enter a reimbursement id number"/>
+        </div>
+        
+        <div id="reimbursement-id-button-container">
+            <button type="submit" class="btn btn-primary" id="search-id">Search</button>
+        </div>
+        <table id="reimbursement-table" class="table table-striped" style="margin-left: 15px; margin-right: 15px;">
+        <thead class="thead">
+            <tr>
+                <th>Reimbursement Id</th>
+                <th>Amount</th>
+                <th>Time submitted</th>
+                <th>Time Resolved</th>
+                <th>Description</th>
+                <th>Author Id</th>
+                <th>Resolver Id</th>
+                <th>Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="reimbursement-list">
+            
+        </tbody>
+        </table>
+    </div>
+    <br/>
+    <div>
+        <button type="submit" class="btn btn-primary" id="home">Home</button>
+        <button type="submit" class="btn btn-primary" id="update-button">Update Reimbursement</button>
+    </div>
+    <div class="alert alert-danger" id="reimbursement-message"></div>
+</div>

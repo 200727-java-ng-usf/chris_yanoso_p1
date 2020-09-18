@@ -2,12 +2,15 @@ package com.revature.services;
 
 import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.InvalidRequestException;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.exceptions.ResourcePersistenceException;
 import com.revature.models.User;
+import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Set;
 
 public class UserService {
 
@@ -16,7 +19,7 @@ public class UserService {
     public UserService(UserRepo userRepo){this.userRepo = userRepo;}
 
     //used to login
-    public Optional<User> authenticate(String username, String password) throws IOException {
+    public User authenticate(String username, String password) throws IOException {
 
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid username/password provided");
@@ -36,7 +39,7 @@ public class UserService {
 
         }
 
-        return authenticatedUser;
+        return authenticatedUser.get();
     }
 
 
@@ -54,6 +57,10 @@ public class UserService {
             throw new ResourcePersistenceException("Provided email is already in use!");
         }
 
+        if (newUser.getUserRole() == null){
+            newUser.setUserRole(UserRole.EMPLOYEE);
+        }
+
         userRepo.save(newUser);
     }
 
@@ -68,21 +75,38 @@ public class UserService {
         Optional<User> user = userRepo.findUserById(id);
 
         if (!user.isPresent()){
-            throw new AuthenticationException("No user found with the provided id");
+            throw new ResourceNotFoundException("No user found with the provided id");
         }
         return user;
 
     }
-    //deletes user by finding user by id
-    public boolean deleteUserById(int id){
-        Optional<User> user = userRepo.findUserById(id);
-        userRepo.delete(user);
-        //checks to see if user exists still
-        if (userRepo.findUserByUsername(user.get().getUsername()).isPresent()){
-            return false;
-        } else {
-            return true;
+
+    //get all users for targeting
+    public Set<User> getAllUsers() {
+        Set<User> users = userRepo.getAllUsers();
+        if (users.isEmpty()){
+            throw new ResourceNotFoundException("No users currently exist");
         }
+        return  users;
+    }
+    //get user by email, used to see if email is available
+    public Optional<User> getUserByEmail(String email) {
+        Optional<User> user = userRepo.findUserByEmail(email);
+        return user;
+    }
+    //get user by username, used to see if username is available
+    public Optional<User> getUserByUsername(String username){
+        Optional<User> user = userRepo.findUserByUsername(username);
+        return user;
+    }
+    //terminates user by finding user by id
+    public void terminateUserById(int id) throws IOException {
+        Optional<User> user = userRepo.findUserById(id);
+        if (!user.isPresent()){
+            throw new ResourceNotFoundException("No user found with the provided id");
+        }
+        user.get().setUserRole(UserRole.TERMINATED);
+        userRepo.updateUser(user.get());
     }
 
 

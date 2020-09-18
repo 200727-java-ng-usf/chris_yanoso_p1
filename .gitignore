@@ -30,3 +30,9 @@ out/
 # IntelliJ-specific files/folders
 *.iml
 .idea/
+
+# Properties files
+*.properties
+
+# Configuration files
+hibernate.cfg.xml

@@ -1,0 +1,32 @@
+<div id ='user-by-id-container'>
+    <div id = 'users-container'>
+        <div class="form-group">
+            <label for="user-id">Id Number</label>
+            <input type="number" class="form-control" id="user-id" placeholder="Please enter a user id number"/>
+        </div>
+        
+        <div id="user-id-button-container">
+        </div>
+        <table id="user-table" class="table table-striped" style="margin-left: 15px; margin-right: 15px;">
+        <thead class="thead">
+            <tr>
+                <th>User Id</th>
+                <th>User Name</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="user-list">
+            
+        </tbody>
+        </table>
+    </div>
+    <button type="submit" class="btn btn-primary" id="search-id">Search</button>
+    <button type="submit" class="btn btn-primary" id="t-id">Terminate</button>
+    <div id ='home-button'>
+        <button type="submit" class="btn btn-primary" id="home">Home</button>
+    </div>
+    <div class="alert alert-danger" id="users-message"></div>
+</div>

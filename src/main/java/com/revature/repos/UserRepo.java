@@ -100,6 +100,24 @@ public class UserRepo {
             return _user;
         }
 
+    public Set<User> getAllUsers(){
+        Set<User> users = new HashSet<>();
+        try (Connection conn = ConnectionFactory.getInstance().getConnection()){
+
+            String sql = baseQuery;
+
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            users = mapResultSet(rs);
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+        return  users;
+    }
+
     private Set<User> mapResultSet(ResultSet rs) throws SQLException {
         Set<User> users = new HashSet<>();
 
@@ -147,23 +165,6 @@ public class UserRepo {
         }
     }
 
-    //deletes user from db
-    // TODO ADD CASCADING DELETE IN DB
-    public void delete(Optional<User> user) {
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-
-            String sql = "DELETE FROM project1.ers_users WHERE ers_user_id = ?";
-
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1,user.get().getId());
-
-            pstmt.executeUpdate();
-
-
-        } catch (SQLException se){
-            se.printStackTrace();
-        }
-    }
 
     public void updateUser(User updatedUser) throws IOException {
 

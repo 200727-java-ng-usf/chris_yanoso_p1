@@ -1,7 +1,7 @@
 package com.revature.models;
 
 public enum ReimbursementStatus {
-    NA("Not Applicable"), OPEN("Open"), CLOSED("Closed");
+    NA("Not Applicable"), APPROVED("Approved"), DENIED("Denied"), PENDING("Pending");
     private String statusName;
     ReimbursementStatus(String name){this.statusName = name;}
 
